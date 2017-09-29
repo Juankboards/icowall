@@ -79,8 +79,10 @@ function closeAll() {
   [infoSection, listSection, gridSection, uploadSection].forEach((element) => element.style.display = "none");
   if(document.getElementById("icon-preview")){
     document.getElementById("icon-preview").removeAttribute("src");
+    document.getElementById("icon-preview").removeAttribute("class");
     document.getElementById("icon-preview").removeAttribute("width");
     document.getElementById("icon-preview").removeAttribute("height");
+    document.getElementById("icon-preview").style.zIndex = "unset";
   }
 } 
 
@@ -177,8 +179,8 @@ document.getElementById("buy").onclick = () =>{
   uploadSection.style.display = "block";
   document.getElementById("icon").click();
   iconContainerClone.onclick = (event) => {
+    let validPosition = true;
     if(imgPreview.src != "" && !imgPreview.className){
-      let validPosition = true;
       let firstXblock = blocksX.indexOf(parseInt(imgPreview.style.left.split("px")[0]));
       let lastXblock = firstXblock + Math.round(imgPreview.width/blockSize) - 1;
       let firstYblock = blocksY.indexOf(parseInt(imgPreview.style.top.split("px")[0]));
@@ -232,7 +234,6 @@ function imageInfoCatcher (element) {
   element.onload = function () {
     let imgWidth = element.width;
     let imgHeight = element.height;
-    console.log(imgWidth, imgHeight);
     let width = Math.round(Math.round(element.width/10)*10*sizeProportion);
     let height = Math.round(Math.round(element.height/10)*10*sizeProportion);
     element.width = width;
