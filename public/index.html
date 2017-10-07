@@ -19,7 +19,7 @@
 		<ul>
 			<li><a class="menu" id="home"><i class="fa fa-table"></i></a></li>
 			<li><a class="menu" id="list"><i class="fa fa-list"></i></a></li>
-			<li><a class="menu" ><i class="fa fa-user"></i></a></li>
+			<li><a class="menu" id="account"><i class="fa fa-user"></i></a></li>
 			<li><a class="menu" id="buy"><i class="fa fa-shopping-cart"></i></a></li>
 			<li><a class="menu" ><i class="fa fa-history"></i></a></li>
 		</ul>
@@ -55,7 +55,61 @@
 		<img id="icon-preview">
 		<input type="file" id="icon">
 		<div id="buy-grid"></div>
-	</section>
+	</section>	
+	<!-- Signup/Signin modal -->
+	<div id="sign-modal" class="modal">
+		<div class="modal-content">
+			<span class="close" id="close-login">X</span>
+			<div id="login">
+				<h3><span id="ico-title">LOGIN</span></h3>			
+				<form action="login" method="GET">	
+					<input name="username" type="text" id="username-login" placeholder="Username" required>
+					<br>			
+					<input name="password" type="password" id="password-login" placeholder="Password" required>
+					<button id="signup-submit">LOG IN</button>
+					<p>Don't have an account? <a id="register-link">Register</a>.</p>
+				</form>
+			</div>
+			<div id="signup">
+				<h3><span id="ico-title">REGISTER</span></h3>	
+				<form action="register" method="POST" onsubmit="return checkPasswordConfirmation()">	
+					<input name="username" type="text" id="username" placeholder="Username" required>
+					<br>			
+					<input name="email" type="email" id="email" placeholder="Email" required>
+					<br>			
+					<input name="password" type="password" id="password" placeholder="New password" required>
+					<br>			
+					<input type="password" id="password-confirmation" placeholder="Email confirmation" required>
+					<button id="signup-submit">CREATE ACCOUNT</button>
+					<p>Already have an account? <a id="login-link">Login</a>.</p>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="buy-modal" class="modal">
+		<div class="modal-content">
+			
+			<div id="position-confirmation">
+				<h3><span id="ico-title">CONFIRM POSITION</span></h3>
+				<p id="position-info"></p>
+				<form>
+					<button type="button" id="cancel-position">CANCEL</button>
+					<button type="button" id="accept-position">ACCEPT</button>
+				</form>
+			</div>
+			<div id="icon-registration">
+				<span class="close" id="close-buy">X</span>
+				<h3><span id="ico-title">BUY</span></h3>	
+				<form>	
+					<input type="text" id="name" placeholder="Name">
+					<br>			
+					<textarea rows="5" cols="30" placeholder="Description" id="email" ></textarea>
+					<input type="url" id="url" placeholder="http://www.example.com">
+					<button id="signup-submit">SUBMIT</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </body>
 <script src="main.js"></script>
 </html>

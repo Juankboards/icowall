@@ -196,6 +196,134 @@ table {
 	cursor: pointer;
 }
 
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,50,50,0.8); 
+}
+
+.modal-content {
+    background-color: #323a4d;
+	margin: 0 auto;
+	width: 90%;
+	max-width: 300px;
+	height: 430px;
+	top: 50%;
+	position: relative;
+	transform: translateY(-50%);
+	padding: 20px;
+}
+
+.modal p {
+	font-size: 0.9em;
+	margin: 5px auto 0 auto;
+}
+
+.modal-content .close {
+	float: right;
+	font-weight: 800;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	font-family: 'superscr';
+	cursor: pointer;
+}
+
+#buy-modal .modal-content {
+	height: 385px;
+}
+
+#login, #signup, #position-confirmation, #icon-registration {
+	display: block;
+	height: 100%;
+}
+
+.modal h3 {
+	text-align: center;
+	margin: 0 auto;
+}
+
+form {
+	width: 250px;
+	margin: 0 auto;
+	position: relative;
+	top: 45%;
+	transform: translateY(-50%);
+	text-align: center;
+}
+
+#signup form {
+	top: 48%;
+}
+
+form button {
+	width: 100%;
+	border: none;
+	height: 50px;
+	color: #fff;
+	background-color: #282f3e;
+	font-family: 'superscr';
+	font-size: .65em;
+	cursor: pointer;
+	padding: 17px;
+}
+
+#cancel-position, #accept-position{
+	width: 48%;
+	float: left;
+}
+
+#position-confirmation form {
+	top: 40%;
+}
+
+#icon-registration form {
+	top: 45%;
+}
+
+#position-confirmation p {
+	position: relative;
+	top: 15%;
+	font-size: 1.23em;
+	text-align: center;
+}
+
+#cancel-position {
+	margin: 0 4% 0 0;
+	background-color: rgba(150,0,0,0.8);
+}
+
+#accept-position {
+	background-color: rgba(0,100,0,0.8);
+}
+
+input {
+	margin: 0 0 10px 0;
+	width: 100%;
+	color: #000;
+	height: 45px;
+	padding: 0 10px;
+	border: none;
+}
+
+textarea {
+	margin: 0 0 10px 0;
+	width: 100%;
+	color: #000;
+	padding: 0 10px;
+	border: none;
+}
+
+#signup, #icon-registration {
+	display: none;
+}
+
 
 
 @media only screen and (min-width: 600px) {

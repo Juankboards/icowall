@@ -29,6 +29,7 @@ function init() {
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, iconsData), listSection);
   addEvent(document.getElementById("home"), "click", undefined, gridSection);
+  addEvent(document.getElementById("account"), "click", undefined, gridSection, document.getElementById("sign-modal"));
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
   addEvent(inputImg, "change", loadImage);
@@ -38,7 +39,10 @@ function init() {
   addEvent(imgPreviewContainer, "click", setImgPreviewPosition.bind(null, imgGridBlocks)); 
 }
 
-window.onload = init();
+window.onload = (function () {
+  init();
+})();
+
 
 
 
@@ -234,12 +238,22 @@ function setImgPreviewPosition (imgGridBlocks){
   if(imgPreview.src != "" && !imgPreview.className){  
     const imgPrevBlocks = getImgPrevBlocks(imgGridBlocks);
     if(validPosition(...imgPrevBlocks)){
-      alert("The coords for the image are ([" + [imgPrevBlocks[0], imgPrevBlocks[1]] + "], [" + [imgPrevBlocks[2], imgPrevBlocks[3]] + "])");
-      freezeImgPreview();
-    } else{
-      alert("Invalid Position");        
+      // alert("The coords for the image are ([" + [imgPrevBlocks[0], imgPrevBlocks[1]] + "], [" + [imgPrevBlocks[2], imgPrevBlocks[3]] + "])");
+      document.getElementById("buy-modal").style.display = "block";
+      document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
+      <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) + "<br>Block Cost per month: $1<br>Total cost per month: $" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*1);
+      // freezeImgPreview();
     }
   }
+}
+
+document.getElementById("cancel-position").onclick = function(){
+  document.getElementById("buy-modal").style.display = "none";
+}
+
+document.getElementById("accept-position").onclick = function(){
+  document.getElementById("position-confirmation").style.display = "none";
+  document.getElementById("icon-registration").style.display = "block";
 }
 
 function getImgPrevBlocks(imgGridBlocks) {
@@ -284,3 +298,61 @@ function loadImage() {
     display.readAsDataURL(img);
   }
 }
+
+
+
+
+
+
+function modalOpen(modal) {
+  modal.style.display = "block";
+}
+
+function modalClose(modal){
+   modal.style.display = "none";
+}
+
+document.getElementById("close-login").onclick = function(event) {
+        document.getElementById("sign-modal").style.display = "none";
+        document.getElementById("signup").style.display = "none";
+        document.getElementById("login").style.display = "block";
+}
+
+document.getElementById("close-buy").onclick = function(event) {
+        document.getElementById("buy-modal").style.display = "none";
+        showSection(gridSection);
+        document.getElementById("icon-registration").style.display = "none";
+        document.getElementById("position-confirmation").style.display = "block";
+
+} 
+
+function checkPasswordConfirmation() {
+  const password = document.getElementById("password"),
+    passwordConfirmation = document.getElementById("password-confirmation");
+    if(password.value != passwordConfirmation.value){
+      passwordNotEqual(password, passwordConfirmation);
+      return false;
+    }
+    return true;
+}
+
+function passwordNotEqual(field1, field2){
+  field1.style.border = "1px solid #E34234";
+  field2.style.border = "1px solid #E34234";
+  alert("The password didn't match");
+  field1.value = "";
+  field2.value = "";
+}
+
+
+document.getElementById("register-link").onclick = function(event) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("signup").style.display = "block";
+}
+
+document.getElementById("login-link").onclick = function(event) {
+        document.getElementById("signup").style.display = "none";
+        document.getElementById("login").style.display = "block";
+}
+
+// function register()
