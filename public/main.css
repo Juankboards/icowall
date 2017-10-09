@@ -125,11 +125,41 @@ li a:hover i {
 	margin-left: 3px;
 }
 
+#tools {
+	width: 100%;
+	position: fixed;
+	bottom: 65px;
+	display: none;
+	z-index: 10;
+	text-align: center;
+	padding: 10px 0 0 0;
+	background-color: #323a4d;
+}
+
+#tools div {
+	width: 49%;
+	display: inline-block;
+}
+
+#tools h3 {
+	font-family: superscr;
+	margin: 0 auto 5px auto;
+	font-size: 0.8em;
+}
+
+
+#tools input {
+	background-color: #282f3e;
+	color: #fff;
+	height: 40px;
+	font-family: superscr;
+}
+
 section {
 	width: 100%;
 	min-height: 100%;
 	text-align: center;
-	padding: 150px 0 75px 0;	
+	padding: 150px 0 149px 0;	
 }
 
 #grid-container {
@@ -189,6 +219,10 @@ table {
 	display: none;
 	position: absolute;
 	top: 0;
+}
+
+#upload-section {
+	overflow:hidden;
 }
 
 #icon-preview {
@@ -352,6 +386,20 @@ textarea {
 		top: 20px;
 		right: 20px;
 		transform: unset;
+	}
+
+	#tools {
+		width: 180px;
+		position: absolute;
+		top: 150px;
+		right: 20px;
+		display: none;
+		text-align: right;
+	}
+
+	#tools div {
+		width: 100%;
+		display: block;
 	}
 
 	section{

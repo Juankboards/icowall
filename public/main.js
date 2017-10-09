@@ -43,9 +43,6 @@ window.onload = (function () {
   init();
 })();
 
-
-
-
 //helpers
 function gridAttributes () {
   const grid = document.getElementById("grid").getBoundingClientRect();
@@ -137,7 +134,10 @@ function addEvent (element, type, fn = ()=>{}, ...section) {
 function showSection(...elements) { 
   if(elements[0]){  
     Array.from(document.body.getElementsByTagName("section")).forEach((element) => element.style.display = "none");
-    elements.forEach((element) => element.style.display = "block");
+    elements.forEach((element) => {
+        element.style.display = "block";
+        document.getElementById("tools").style.display = "none";
+    })
   }
 }
 
@@ -197,6 +197,7 @@ function cleanImgPreview() {
 function arrangeImgPreviewGrid() {
   const imgPreviewGridAttributes = gridAttributes();
   imgPreviewGridAttributes.left -= window.innerWidth >= 1150? 70 : 0;
+  uploadSection.style.height = window.innerWidth >= 1150? "100%" : window.getComputedStyle(gridSection, null).height;
   arrangeElement(imgPreviewContainer, imgPreviewGridAttributes);
 }
 
@@ -238,7 +239,6 @@ function setImgPreviewPosition (imgGridBlocks){
   if(imgPreview.src != "" && !imgPreview.className){  
     const imgPrevBlocks = getImgPrevBlocks(imgGridBlocks);
     if(validPosition(...imgPrevBlocks)){
-      // alert("The coords for the image are ([" + [imgPrevBlocks[0], imgPrevBlocks[1]] + "], [" + [imgPrevBlocks[2], imgPrevBlocks[3]] + "])");
       document.getElementById("buy-modal").style.display = "block";
       document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) + "<br>Block Cost per month: $1<br>Total cost per month: $" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*1);
@@ -275,8 +275,8 @@ function validPosition(firstXblock, lastXblock, firstYblock, lastYblock) {
 }
 
 function validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, lastYblock) {
-  if((firstXblock >= unavailable.columnBlocks[0] && firstXblock <= unavailable.columnBlocks[1]) || (lastXblock >= unavailable.columnBlocks[0] && lastXblock <= unavailable.columnBlocks[1])){
-    if((firstYblock >= unavailable.rowBlocks[0] && firstYblock <= unavailable.rowBlocks[1]) || (lastYblock >= unavailable.rowBlocks[0] && lastYblock <= unavailable.rowBlocks[1])){
+  if((firstXblock >= unavailable.columnBlocks[0] && firstXblock <= unavailable.columnBlocks[1]) || (lastXblock >= unavailable.columnBlocks[0] && lastXblock <= unavailable.columnBlocks[1]) || (firstXblock < unavailable.columnBlocks[0] && lastXblock > unavailable.columnBlocks[1])){
+    if((firstYblock >= unavailable.rowBlocks[0] && firstYblock <= unavailable.rowBlocks[1]) || (lastYblock >= unavailable.rowBlocks[0] && lastYblock <= unavailable.rowBlocks[1]) || (firstYblock < unavailable.rowBlocks[0] && lastYblock > unavailable.rowBlocks[1])){
       return false;
     }
   }
@@ -285,20 +285,50 @@ function validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, l
 
 function setImgPrevAttributes() {
   const sizeProportion = getSizeProportion(),
-   width = Math.round(Math.round(imgPreview.width/10)*10*sizeProportion),
-   height = Math.round(Math.round(imgPreview.height/10)*10*sizeProportion);
+   colBlocks = Math.round(imgPreview.width/10)<=100?Math.round(imgPreview.width/10):100;
+   rowsBlocks = Math.round(imgPreview.height/10)<=100?Math.round(imgPreview.height/10):100;
+   setSizeToolsValues(colBlocks, rowsBlocks);
+   width = Math.round(colBlocks*10*sizeProportion),
+   height = Math.round(rowsBlocks*10*sizeProportion);
 
-  imgPreview.width = width;
-  imgPreview.height = height;
+  imgPreview.width = width <= 1000*sizeProportion? width : Math.round(1000*sizeProportion);
+  imgPreview.height = height <= 1000*sizeProportion? height : Math.round(1000*sizeProportion);
+}
+
+function updateImgPrevAttributes(colBlocks, rowsBlocks) {
+  const sizeProportion = getSizeProportion();
+  if(colBlocks){
+    imgPreview.width = Math.round(colBlocks*10*sizeProportion);
+  }
+
+  if(rowsBlocks){
+    imgPreview.height = Math.round(rowsBlocks*10*sizeProportion);
+  }
 }
 
 function loadImage() {
   const img = inputImg.files[0];
   if(img) {
     display.readAsDataURL(img);
+    document.getElementById("tools").style.display = "block";
   }
 }
 
+function setSizeToolsValues(columns, rows){
+  document.getElementById("blocks-columns").value = columns;
+  document.getElementById("blocks-rows").value = rows;
+}
+
+
+document.getElementById("blocks-columns").onchange = function (event) {
+  // console.log("new width" + document.getElementById("blocks-columns").value);
+  updateImgPrevAttributes(document.getElementById("blocks-columns").value);
+}
+
+document.getElementById("blocks-rows").onchange = function (event) {
+  // console.log("new width" + document.getElementById("blocks-columns").value);
+  updateImgPrevAttributes(null, document.getElementById("blocks-rows").value);
+}
 
 
 
