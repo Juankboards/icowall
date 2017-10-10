@@ -35,6 +35,7 @@ MongoClient.connect('mongodb://icowall:C3FE078186CD266D6AB12C32FC81E4CAB77EE6B36
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
+app.use(bodyParser({limit: '2mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', function (req, res) {
   res.render('index');
@@ -59,10 +60,8 @@ app.post('/uniqueness', (req, res) => {
   const parameter = req.body.parameter;
   const value = req.body.value;
   query[parameter] = value;
-  console.log(query);
   db.collection("users").find(query).toArray(function (err, result) {
     if (err) throw err
-    console.log(result);
     if (result.length > 0){
       res.status(400).json({message: req.body.parameter + " already used"});
     } else{
@@ -93,16 +92,15 @@ app.post("/upload", function (req, res) {
     const imageBuffer = new Buffer(dataUri.split(",")[1], "base64");
     const filename = "icon_" + Date.now() + "_" + Math.random().toString().split(".")[1] + "." + type;
     icon.filename = filename;
-    console.log(icon);
     fs.writeFile("./public/uploads/" + filename, imageBuffer, (err) => {
     if (err) throw err;
-      db.collection('icons').save(icon, (err, result) => {
-        if (err) {
-          res.status(500).json({message: err});
-        } else {
-          res.status(200).json({message: "Icon stored. You will recieve an email to confirm your purchase"});
-        }
-      })
+    db.collection('icons').save(icon, (err, result) => {
+      if (err) {
+        res.status(500).json({message: err});
+      } else {
+        res.status(200).json({message: "Icon stored. You will recieve an email to confirm your purchase"});
+      }
+    })
     });
 
 });
