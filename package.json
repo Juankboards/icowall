@@ -14,13 +14,10 @@
     "npm": "5.3.x"
   },
   "dependencies": {
-    "auth0-api-jwt-rsa-validation": "0.0.1",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.0",
-    "express-jwt": "^5.3.0",
-    "mongodb": "^2.2.31",
-    "multer": "^1.2.0"
+    "mongodb": "^2.2.31"
   },
   "devDependencies": {
     "webpack": "^3.6.0"

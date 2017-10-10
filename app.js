@@ -34,8 +34,7 @@ MongoClient.connect('mongodb://icowall:C3FE078186CD266D6AB12C32FC81E4CAB77EE6B36
 })
 
 app.use(express.static('public'));
-app.use(bodyParser.json());
-app.use(bodyParser({limit: '2mb'}));
+app.use(bodyParser.json({limit: '2mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', function (req, res) {
   res.render('index');
