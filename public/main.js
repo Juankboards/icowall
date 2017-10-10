@@ -37,6 +37,7 @@ function init() {
   addEvent(imgPreview, "click", unsetImgPreviewPosition);
   imgPreviewDragg(imgGridBlocks);  
   addEvent(imgPreviewContainer, "click", setImgPreviewPosition.bind(null, imgGridBlocks)); 
+  addEvent(document.getElementById("ico-registration-submit"), "click", icoRegistration.bind(null, imgGridBlocks));
 }
 
 window.onload = (function () {
@@ -330,6 +331,34 @@ document.getElementById("blocks-rows").onchange = function (event) {
   updateImgPrevAttributes(null, document.getElementById("blocks-rows").value);
 }
 
+function icoRegistration(imgGridBlocks) {
+  const formInfo = document.getElementById("ico-registration-form");
+  const imgBlocks = getImgPrevBlocks(imgGridBlocks);
+  const imgInfo = {
+    "name": formInfo[0].value,
+    "description": formInfo[1].value,
+    "web": formInfo[2].value,
+    "columnSize": document.getElementById("blocks-columns").value,
+    "rowSize": document.getElementById("blocks-rows").value,
+    "columns": "[" + imgBlocks[0] + "-" + imgBlocks[1] + "]",
+    "rows": "[" + imgBlocks[2] + "-" + imgBlocks[3] + "]",
+    "image": imgPreview.src
+  }
+
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/upload', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("close-buy").click();
+      alert(JSON.parse(this.responseText).message)
+    } else {
+      alert(JSON.parse(this.responseText).message)
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(imgInfo));
+}
+
 
 
 
@@ -353,8 +382,44 @@ document.getElementById("close-buy").onclick = function(event) {
         showSection(gridSection);
         document.getElementById("icon-registration").style.display = "none";
         document.getElementById("position-confirmation").style.display = "block";
+}
 
-} 
+document.getElementById("signup-submit").onclick = function(event) {
+  const verifiedPsw = checkPasswordConfirmation()
+  const validUsername = checkFields("username")
+  const validEmail = checkFields("email")
+  if (verifiedPsw && validUsername && validEmail) {
+    registerAccount();
+  }
+}
+
+function checkFields(parameter) {
+    const input = document.getElementById(parameter);
+    if (checkUniqueness(parameter, input)) {
+      return true;
+    }
+    return false;
+}
+
+
+function checkUniqueness(parameter, input) {
+  let unique;
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/uniqueness', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      input.style.border = "none";
+      unique = true;
+    } else {
+      input.style.border = "1px solid #E34234";
+      alert(JSON.parse(this.responseText).message)
+      unique =  false;
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify({"parameter": parameter, "value": input.value}));
+  return unique;
+}
 
 function checkPasswordConfirmation() {
   const password = document.getElementById("password"),
@@ -367,11 +432,30 @@ function checkPasswordConfirmation() {
 }
 
 function passwordNotEqual(field1, field2){
-  field1.style.border = "1px solid #E34234";
-  field2.style.border = "1px solid #E34234";
   alert("The password didn't match");
   field1.value = "";
   field2.value = "";
+}
+
+function registerAccount() {
+  const form = document.getElementById("signup-form");
+  const userInfo = {
+    "username": form[0].value,
+    "email": form[1].value,
+    "password": form[2].value
+  }
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/register', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("close-login").click();
+      alert(JSON.parse(this.responseText).message)
+    } else {
+      alert(JSON.parse(this.responseText).message)
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(userInfo));
 }
 
 
@@ -384,5 +468,3 @@ document.getElementById("login-link").onclick = function(event) {
         document.getElementById("signup").style.display = "none";
         document.getElementById("login").style.display = "block";
 }
-
-// function register()

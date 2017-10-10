@@ -63,7 +63,7 @@
 	</section>
 	<section id="upload-section">
 		<img id="icon-preview">
-		<input type="file" id="icon">
+		<input type="file" id="icon" name="filename">
 		<div id="buy-grid"></div>
 	</section>	
 	<!-- Signup/Signin modal -->
@@ -76,13 +76,13 @@
 					<input name="username" type="text" id="username-login" placeholder="Username" required>
 					<br>			
 					<input name="password" type="password" id="password-login" placeholder="Password" required>
-					<button id="signup-submit">LOG IN</button>
+					<button id="signin-submit">LOG IN</button>
 					<p>Don't have an account? <a id="register-link">Register</a>.</p>
 				</form>
 			</div>
 			<div id="signup">
 				<h3><span id="ico-title">REGISTER</span></h3>	
-				<form action="register" method="POST" onsubmit="return checkPasswordConfirmation()">	
+				<form id="signup-form">	
 					<input name="username" type="text" id="username" placeholder="Username" required>
 					<br>			
 					<input name="email" type="email" id="email" placeholder="Email" required>
@@ -90,7 +90,7 @@
 					<input name="password" type="password" id="password" placeholder="New password" required>
 					<br>			
 					<input type="password" id="password-confirmation" placeholder="Email confirmation" required>
-					<button id="signup-submit">CREATE ACCOUNT</button>
+					<button type="button" id="signup-submit">CREATE ACCOUNT</button>
 					<p>Already have an account? <a id="login-link">Login</a>.</p>
 				</form>
 			</div>
@@ -110,12 +110,12 @@
 			<div id="icon-registration">
 				<span class="close" id="close-buy">X</span>
 				<h3><span id="ico-title">BUY</span></h3>	
-				<form>	
+				<form id="ico-registration-form">	
 					<input type="text" id="name" placeholder="Name">
 					<br>			
 					<textarea rows="5" cols="30" placeholder="Description" id="email" ></textarea>
 					<input type="url" id="url" placeholder="http://www.example.com">
-					<button id="signup-submit">SUBMIT</button>
+					<button type="button" id="ico-registration-submit">SUBMIT</button>
 				</form>
 			</div>
 		</div>
