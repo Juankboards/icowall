@@ -2,9 +2,7 @@ const express = require('express');
 const bodyParser= require('body-parser');
 const fs= require('fs');
 const bcrypt = require('bcrypt');
-const jwt = require('express-jwt');
 const MongoClient = require('mongodb').MongoClient;
-const rsaValidation = require('auth0-api-jwt-rsa-validation');
 const app = express();
 let db;
 
