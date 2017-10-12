@@ -5,7 +5,6 @@
 	<link rel="stylesheet" href="main.css">
 	<link href="https://fonts.googleapis.com/css?family=Jura" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-	<script src="functionality.js" type="module"></script>
 	<title>IcoWall</title>
 </head>
 <body>
@@ -72,11 +71,11 @@
 			<span class="close" id="close-login">X</span>
 			<div id="login">
 				<h3><span id="ico-title">LOGIN</span></h3>			
-				<form action="login" method="GET">	
+				<form id="signin-form">	
 					<input name="username" type="text" id="username-login" placeholder="Username" required>
 					<br>			
 					<input name="password" type="password" id="password-login" placeholder="Password" required>
-					<button id="signin-submit">LOG IN</button>
+					<button type="button" id="signin-submit">LOG IN</button>
 					<p>Don't have an account? <a id="register-link">Register</a>.</p>
 				</form>
 			</div>
