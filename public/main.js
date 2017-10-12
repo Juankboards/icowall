@@ -335,7 +335,7 @@ function icoRegistration(imgGridBlocks) {
   const formInfo = document.getElementById("ico-registration-form");
   const imgBlocks = getImgPrevBlocks(imgGridBlocks);
   const imgInfo = {
-    "name": formInfo[0].value,
+    "username": formInfo[0].value,
     "description": formInfo[1].value,
     "web": formInfo[2].value,
     "columnSize": document.getElementById("blocks-columns").value,
@@ -346,7 +346,7 @@ function icoRegistration(imgGridBlocks) {
   }
 
   var httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/upload', false);
+  httpRequest.open('POST', '/api/upload', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-buy").click();
@@ -356,6 +356,7 @@ function icoRegistration(imgGridBlocks) {
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.withCredentials = true;
   httpRequest.send(JSON.stringify(imgInfo));
 }
 
@@ -393,6 +394,10 @@ document.getElementById("signup-submit").onclick = function(event) {
   }
 }
 
+document.getElementById("signin-submit").onclick = function(event) {
+    login();
+}
+
 function checkFields(parameter) {
     const input = document.getElementById(parameter);
     if (checkUniqueness(parameter, input)) {
@@ -405,7 +410,7 @@ function checkFields(parameter) {
 function checkUniqueness(parameter, input) {
   let unique;
   var httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/uniqueness', false);
+  httpRequest.open('POST', '/api/uniqueness', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       input.style.border = "none";
@@ -445,7 +450,7 @@ function registerAccount() {
     "password": form[2].value
   }
   var httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/register', false);
+  httpRequest.open('POST', '/api/register', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-login").click();
@@ -456,6 +461,41 @@ function registerAccount() {
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send(JSON.stringify(userInfo));
+}
+
+function login() {
+  const form = document.getElementById("signin-form");
+  const userInfo = {
+    "username": form[0].value,
+    "password": form[1].value
+  }
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/api/login', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("close-login").click();
+      alert(JSON.parse(this.responseText).message)
+    } else {
+      alert(JSON.parse(this.responseText).message)
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(userInfo));
+}
+
+function dashboard() {
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/dashboard', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      // document.getElementById("close-login").click();
+      alert(JSON.parse(this.responseText).message)
+    } else {
+      alert(JSON.parse(this.responseText).message)
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send();
 }
 
 
