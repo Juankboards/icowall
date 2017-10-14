@@ -31,7 +31,6 @@ module.exports = function(app) {
   });
 
   require('../config/passport')(passport);
-  require('dotenv').load();
   const apiRoutes = express.Router();
 
   apiRoutes.post('/register', (req, res) => {

@@ -1,7 +1,6 @@
 const express = require('express'),
       MongoClient = require('mongodb').MongoClient,
       app = express();
-      require('dotenv').load();
 let db;
 
 
