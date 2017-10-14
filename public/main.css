@@ -225,6 +225,10 @@ table {
 	overflow:hidden;
 }
 
+#buy-grid img {
+	position: absolute;
+}
+
 #icon-preview {
 	position: absolute;
 	cursor: pointer;
@@ -270,7 +274,7 @@ table {
 }
 
 #buy-modal .modal-content {
-	height: 385px;
+	height: 445px;
 }
 
 #login, #signup, #position-confirmation, #icon-registration {

@@ -1,15 +1,15 @@
 const express = require('express'),
-      config = require('./config/main'),
       MongoClient = require('mongodb').MongoClient,
       app = express();
+      require('dotenv').load();
 let db;
 
 
 
-MongoClient.connect(config.database, (err, database) => {
+MongoClient.connect(process.env.DATABASE, (err, database) => {
   if (err) return console.log(err)
   db = database;
-  app.listen(config.port);
+  app.listen(process.env.PORT || 3000);
 })
 
 app.use(express.static('public'));
@@ -22,19 +22,3 @@ app.use(function(req, res, next) {
 });
 
 require('./app/routes')(app);    
-
-
-
-
-
-
-// C3FE078186CD266D6AB12C32FC81E4CAB77EE6B36ED02EBE38099024D5686260
-
-    // bcrypt.compare('somePassword', hash, function(err, res) {
-    //   if(res) {
-    //    // Passwords match
-    //   } else {
-    //    // Passwords don't match
-    //   } 
-    // });
-

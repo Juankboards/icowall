@@ -1,10 +1,33 @@
 // Static data. Will be from db
-const iconsData = [
-  {"title":"logo1.png", "name": "ico1", "width":100, "height":100, "position":{"X": 0, "Y": 0}, "link": "https://www.logo1.com", "description": "This is the logo1 description", "date": "2017-08-23"},
-  {"title":"logo2.jpg", "name": "ico2", "width":100, "height":100, "position":{"X": 900, "Y": 900}, "link": "https://www.logo2.com", "description": "This is the logo2 description", "date": "2017-11-16"},
-  {"title":"logo3.png", "name": "ico3", "width":250, "height":130, "position":{"X": 500, "Y": 500}, "link": "https://www.logo2.com", "description": "This is the logo3 description", "date": "1991-04-29"}
-]
+const approvedIcons = {"icons": []};
+const allIcons = {"icons": []}
 
+function getApprovedIcons() {
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/getapprovedicons', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      approvedIcons.icons = JSON.parse(this.responseText).icons;
+    } 
+  };
+  httpRequest.send();
+}
+
+function getAllIcons() {
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/getallicons', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      allIcons.icons = JSON.parse(this.responseText).icons;
+      allIcons.icons.forEach((icon, id, array) => {
+        if(!icon.approved){
+          array[id].filename = "img/reserved.png";
+        }
+      })
+    } 
+  };
+  httpRequest.send();
+}
 
 const infoSection = document.getElementById("info-section"),
     listSection = document.getElementById("list-section"),
@@ -24,12 +47,14 @@ const infoSection = document.getElementById("info-section"),
 function init() {
   window.scrollTo(0, 0); //Always start at top of the page
   arrangeElement(iconsContainer, gridAttributes());
-  setIcons(iconsContainer, iconsData);
+  getApprovedIcons();
+  getAllIcons();
+  populateHome();
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
-  addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, iconsData), listSection);
-  addEvent(document.getElementById("home"), "click", undefined, gridSection);
-  addEvent(document.getElementById("account"), "click", undefined, gridSection, document.getElementById("sign-modal"));
+  addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"]), listSection);
+  addEvent(document.getElementById("home"), "click", populateHome, gridSection);
+  addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
   addEvent(inputImg, "change", loadImage);
@@ -37,7 +62,7 @@ function init() {
   addEvent(imgPreview, "click", unsetImgPreviewPosition);
   imgPreviewDragg(imgGridBlocks);  
   addEvent(imgPreviewContainer, "click", setImgPreviewPosition.bind(null, imgGridBlocks)); 
-  addEvent(document.getElementById("ico-registration-submit"), "click", icoRegistration.bind(null, imgGridBlocks));
+  addEvent(document.getElementById("ico-registration-submit"), "click", iconRegistration.bind(null, imgGridBlocks));
 }
 
 window.onload = (function () {
@@ -63,17 +88,17 @@ function arrangeElement (element, attributes) {
 
 function setIcons (parentElement, elements) {
   const sizeProportion = getSizeProportion();
+  const blockProperties = getImgGridBlocks(iconsContainer);
   elements.forEach((element) => {
     elementAttributes = {"type": "IMG", 
       "hasText": false, "text": "", 
-      "attributes": [{"type": "src", "value": "uploads/"+element.title}, 
-                    {"type": "width", "value": Math.round(Math.round(element.width/10)*10*sizeProportion)},
-                    {"type": "height", "value": Math.round(Math.round(element.height/10)*10*sizeProportion)}
+      "attributes": [{"type": "src", "value": element.filename}, 
+                    {"type": "width", "value": element.columnSize*blockProperties.size},
+                    {"type": "height", "value": element.rowSize*blockProperties.size}
                     ]
     };
-
     let newIcon = populateElement(parentElement, elementAttributes);
-    arrangeElement(newIcon, {"top": Math.round(element.position.X*sizeProportion), "left": Math.round(element.position.Y*sizeProportion)});
+    arrangeElement(newIcon, {"top": Math.round(element.rows[0]*blockProperties.size), "left": Math.round(element.columns[0]*blockProperties.size)});
     makeElementBlocksUnavailable(element); //later not her but when buy blocks
     addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element), infoSection);
   });
@@ -109,8 +134,8 @@ function appendElement (parentElement, childElement) {
 
 function makeElementBlocksUnavailable (element) {
   //later will be a post request
-  const blocks = getElementBlocks(element);
-  unavailableBlocks.push({"columnBlocks": blocks.column, "rowBlocks": blocks.row})
+  // const blocks = getElementBlocks(element);
+  unavailableBlocks.push({"columnBlocks": element.columns, "rowBlocks": element.rows})
 }
 
 function getElementBlocks (element) {
@@ -144,11 +169,11 @@ function showSection(...elements) {
 
 function populateInfo (parentElement, data) {
   cleanElement(parentElement);
-  populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": "uploads/"+data.title}]});
+  populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": data.filename}]});
   populateElement(parentElement, {"type": "H1", "hasText": true, "text": data.name, "attributes": []});
   populateElement(parentElement, {"type": "P", "hasText": true, "text": data.description, "attributes": []});
-  populateElement(parentElement, {"type": "A", "hasText": true, "text": data.link, 
-                                  "attributes": [{"type": "href", "value": data.link}, {"type": "target", "value": "_blank"}]});
+  populateElement(parentElement, {"type": "A", "hasText": true, "text": data.web, 
+                                  "attributes": [{"type": "href", "value": data.web}, {"type": "target", "value": "_blank"}]});
 }
 
 function cleanElement (element) { 
@@ -162,7 +187,7 @@ function populateTable (parentElement, data) {
     data.forEach((element) => {
       let newRow = populateElement(parentElement, {"type": "TR", "hasText": false, "text": "", "attributes": []});
       let imgColumn = populateElement(newRow, {"type": "TD", "hasText": false, "text": "", "attributes": [{"type": "class", "value": "img-column"}]});
-      populateElement(imgColumn, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": "uploads/"+element.title}]});
+      populateElement(imgColumn, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": element.filename}]});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": []});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.description, "attributes": []});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.date, "attributes": []});
@@ -184,7 +209,13 @@ function unsetImgPreviewPosition () {
 }
 
 function browseImage() {
-  cleanImgPreview();  
+  if(!checkSession().logged){
+    document.getElementById("account").click();
+    return;
+  }
+  cleanImgPreview();
+  cleanElement(iconsContainer);
+  setIcons(iconsContainer, allIcons["icons"]);  
   inputImg.click(); //select image
 }
 
@@ -331,17 +362,18 @@ document.getElementById("blocks-rows").onchange = function (event) {
   updateImgPrevAttributes(null, document.getElementById("blocks-rows").value);
 }
 
-function icoRegistration(imgGridBlocks) {
+function iconRegistration(imgGridBlocks) {
   const formInfo = document.getElementById("ico-registration-form");
   const imgBlocks = getImgPrevBlocks(imgGridBlocks);
   const imgInfo = {
-    "username": formInfo[0].value,
+    "name": formInfo[0].value,
     "description": formInfo[1].value,
     "web": formInfo[2].value,
+    "date": formInfo[3].value,
     "columnSize": document.getElementById("blocks-columns").value,
     "rowSize": document.getElementById("blocks-rows").value,
-    "columns": "[" + imgBlocks[0] + "-" + imgBlocks[1] + "]",
-    "rows": "[" + imgBlocks[2] + "-" + imgBlocks[3] + "]",
+    "columns": [imgBlocks[0], imgBlocks[1]],
+    "rows": [imgBlocks[2], imgBlocks[3]],
     "image": imgPreview.src
   }
 
@@ -350,9 +382,9 @@ function icoRegistration(imgGridBlocks) {
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-buy").click();
-      alert(JSON.parse(this.responseText).message)
+      swal("Well done!", JSON.parse(this.responseText).message, "success");
     } else {
-      alert(JSON.parse(this.responseText).message)
+      swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
@@ -417,7 +449,7 @@ function checkUniqueness(parameter, input) {
       unique = true;
     } else {
       input.style.border = "1px solid #E34234";
-      alert(JSON.parse(this.responseText).message)
+      swal("Ooops!", JSON.parse(this.responseText).message, "warning");
       unique =  false;
     }
   };
@@ -437,7 +469,7 @@ function checkPasswordConfirmation() {
 }
 
 function passwordNotEqual(field1, field2){
-  alert("The password didn't match");
+  swal("Watch out!", "The password didn't match", "warning");
   field1.value = "";
   field2.value = "";
 }
@@ -454,9 +486,9 @@ function registerAccount() {
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-login").click();
-      alert(JSON.parse(this.responseText).message)
+      swal("Great!", JSON.parse(this.responseText).message, "success");
     } else {
-      alert(JSON.parse(this.responseText).message)
+      swal("Sorry!", JSON.parse(this.responseText).message, "error");
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
@@ -474,30 +506,59 @@ function login() {
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-login").click();
-      alert(JSON.parse(this.responseText).message)
     } else {
-      alert(JSON.parse(this.responseText).message)
+      swal("Sorry!", JSON.parse(this.responseText).message, "error");
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send(JSON.stringify(userInfo));
 }
 
-function dashboard() {
+function isLogged() {
+  const session = checkSession();
+  if(session.logged){
+    swal({
+      title: "Yeahh!",
+      text: "You are already logged as " + session.user["username"],
+      icon: "success",
+      buttons: ["Sign out", "Keep session"],
+    })
+    .then((session) => {
+      if (!session) {
+        signOut();
+      }
+    });
+    return;
+  } 
+  document.getElementById("sign-modal").style.display="block";
+}
+
+function checkSession() {
+  let status = {"logged": false, "user": {}};
   var httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/dashboard', false);
+  httpRequest.open('GET', '/api/logged', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      // document.getElementById("close-login").click();
-      alert(JSON.parse(this.responseText).message)
-    } else {
-      alert(JSON.parse(this.responseText).message)
-    }
+      status.logged = true;
+      status.user = JSON.parse(this.responseText).user;
+    } 
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send();
+  return status;
 }
 
+function signOut() {
+  var httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/signout', false);
+  httpRequest.send();
+  return status;
+}
+
+function populateHome() {
+  cleanElement(iconsContainer);
+  setIcons(iconsContainer, approvedIcons["icons"]);
+}
 
 document.getElementById("register-link").onclick = function(event) {
         document.getElementById("login").style.display = "none";

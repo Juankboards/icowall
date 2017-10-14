@@ -1,37 +1,39 @@
 const JwtStrategy = require('passport-jwt').Strategy;  
 const ExtractJwt = require('passport-jwt').ExtractJwt;  
-// const User = require('../app/models/user');  
-const config = require('../config/main');
+MongoClient = require('mongodb').MongoClient;
 
-// Setup work and export for the JWT passport strategy
-module.exports = function(passport) {  
-  const jwtOptions = {};
-  jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-  jwtOptions.secretOrKey = config.secret;
-  passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
-    // User.findOne({id: jwt_payload.id}, function(err, user) {
-      // if (err) {
-      //   return done(err, false);
-      // }
-      const user = users.find((user) => user.username == username);
-      if (user) {
-        done(null, user);
-      } else {
-        done(null, false);
-      }
-    }));
-  // }));
+
+    let db;
+
+
+
+    MongoClient.connect(process.env.DATABASE, (err, database) => {
+      if (err) return console.log(err)
+      db = database;
+    })
+
+var cookieExtractor = function(req) {
+  var token = null;
+  if (req && req.cookies) token = req.cookies['jwt'];
+  return token;
 };
 
-var users = [
-  {
-    id: 1,
-    username: 'jonathanmh',
-    password: '%2yx4'
-  },
-  {
-    id: 2,
-    username: 'test',
-    password: 'test'
-  }
-];
+module.exports = function(passport) {  
+  const jwtOptions = {};
+  jwtOptions.jwtFromRequest = cookieExtractor;
+  jwtOptions.secretOrKey = process.env.JWT_SECRET;
+  passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
+      const query = {};
+      query["id"] = jwt_payload.id;
+      db.collection("users").findOne(query, function(err, user){
+        // if (err) throw err;
+        
+          if (user) {
+            delete user.password;
+            done(null, user);
+          } else {
+            done(null, false);
+          }
+      }); 
+    }));
+};
