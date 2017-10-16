@@ -68,7 +68,7 @@
 	</section>	
 	<!-- Signup/Signin modal -->
 	<div id="sign-modal" class="modal">
-		<div class="modal-content">
+		<div class="modal-content" onclick="(function(e) { e.preventDefault(); e.stopPropagation(); })(event)">
 			<span class="close" id="close-login">X</span>
 			<div id="login">
 				<h3><span id="ico-title">LOGIN</span></h3>			

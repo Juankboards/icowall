@@ -6,12 +6,13 @@ const express = require('express'),
     cookieParser = require('cookie-parser'),
     passport = require("passport"),
     aws = require('aws-sdk'),
+    crypto = require('crypto');
     MongoClient = require('mongodb').MongoClient;
 
 
     let db;
 
-
+    // require('dotenv').load();
 
     MongoClient.connect(process.env.DATABASE, (err, database) => {
       if (err) return console.log(err)
@@ -30,11 +31,18 @@ module.exports = function(app) {
     res.render('index');
   });
 
+  app.get("/emailconfirmation", function (req, res) {
+    res.render('index');
+  });
+
   require('../config/passport')(passport);
   const apiRoutes = express.Router();
 
   apiRoutes.post('/register', (req, res) => {
     const userInfo = req.body;
+    userInfo.unconfirmed = crypto.randomBytes(20).toString('hex');
+    userInfo.recover = "";
+    userInfo.created = Date.now()
     bcrypt.hash(req.body.password, 10, function(err, hash) {
       userInfo.password = hash;
       db.collection('users').save(userInfo, (err, result) => {
@@ -149,6 +157,11 @@ module.exports = function(app) {
         res.status(401).json({message:"no such user found"});
         return;
       }
+
+      if(user.unconfirmed){
+        res.status(401).json({message:"You need to confirm your email to Login"});
+        return;
+      }
       
       bcrypt.compare(password, user.password, function(err, match) {
         if(match) {
@@ -163,6 +176,20 @@ module.exports = function(app) {
     });
   });
 
+  apiRoutes.put("/emailconfirmation", function(req, res) {
+    const query = {unconfirmed: req.query.id};
+    db.collection("users").findAndModify({
+      query: query,
+      sort: { created: 1 },
+      update: { $unset: {unconfirmed: "" }}
+    }, function(err, user){
+      if( !user ){
+        res.status(401).json({message:"Invalid link"});
+        return;
+      }
+    });
+  });
+
   apiRoutes.get('/logged', passport.authenticate('jwt', { session: false }), function(req, res) {
     res.status(200).json({"message": 'logged'+Date(), "user": req.user});
   });
@@ -173,18 +200,7 @@ module.exports = function(app) {
   });
 
 
-  app.use('/api', apiRoutes);  
 
-  const users = [
-    {
-      id: 1,
-      username: 'jonathanmh',
-      password: '%2yx4'
-    },
-    {
-      id: 2,
-      username: 'test',
-      password: 'test'
-    }
-  ];
+
+  app.use('/api', apiRoutes); 
 }

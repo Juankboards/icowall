@@ -4,7 +4,7 @@ const express = require('express'),
 let db;
 
 
-
+// require('dotenv').load();
 MongoClient.connect(process.env.DATABASE, (err, database) => {
   if (err) return console.log(err)
   db = database;

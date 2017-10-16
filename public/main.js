@@ -1,4 +1,5 @@
 // Static data. Will be from db
+alert(document.location)
 const approvedIcons = {"icons": []};
 const allIcons = {"icons": []}
 
@@ -405,16 +406,22 @@ function modalClose(modal){
 }
 
 document.getElementById("close-login").onclick = function(event) {
-        document.getElementById("sign-modal").style.display = "none";
-        document.getElementById("signup").style.display = "none";
-        document.getElementById("login").style.display = "block";
+  document.getElementById("sign-modal").style.display = "none";
+  document.getElementById("signup").style.display = "none";
+  document.getElementById("login").style.display = "block";
 }
 
+document.getElementById("sign-modal").onclick = function(event) {
+  document.getElementById("sign-modal").style.display = "none";
+  document.getElementById("signup").style.display = "none";
+  document.getElementById("login").style.display = "block";
+} 
+
 document.getElementById("close-buy").onclick = function(event) {
-        document.getElementById("buy-modal").style.display = "none";
-        showSection(gridSection);
-        document.getElementById("icon-registration").style.display = "none";
-        document.getElementById("position-confirmation").style.display = "block";
+  document.getElementById("buy-modal").style.display = "none";
+  showSection(gridSection);
+  document.getElementById("icon-registration").style.display = "none";
+  document.getElementById("position-confirmation").style.display = "block";
 }
 
 document.getElementById("signup-submit").onclick = function(event) {
