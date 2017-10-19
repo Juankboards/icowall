@@ -21,3 +21,7 @@ app.use(function(req, res, next) {
 });
 
 require('./app/routes')(app);    
+
+app.get('/*', function(req, res){
+    res.sendFile(__dirname + '/public/index.html');
+  });

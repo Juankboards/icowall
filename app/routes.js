@@ -6,9 +6,9 @@ const express = require('express'),
     cookieParser = require('cookie-parser'),
     passport = require("passport"),
     aws = require('aws-sdk'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    mailgun = require('mailgun-js')({apiKey: process.env.MAIL_KEY, domain: process.env.MAIL_DOMAIN});
     MongoClient = require('mongodb').MongoClient;
-
 
     let db;
 
@@ -23,20 +23,13 @@ module.exports = function(app) {
 
 
   app.use(passport.initialize());
-  app.use(bodyParser.json({limit: '2mb'}));
+  app.use(bodyParser.json({limit: '100mb'}));
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  app.get('/', function (req, res) {
-    res.render('index');
-  });
-
-  app.get("/emailconfirmation", function (req, res) {
-    res.render('index');
-  });
-
   require('../config/passport')(passport);
   const apiRoutes = express.Router();
+  app.use('/api', apiRoutes); 
 
   apiRoutes.post('/register', (req, res) => {
     const userInfo = req.body;
@@ -49,6 +42,17 @@ module.exports = function(app) {
         if (err) {
           res.status(500).json({message: err});
         } else {
+          const mailInfo = {
+            from: 'IcoWall <me@samples.mailgun.org>',
+            to: userInfo.email,
+            subject: 'IcoWall Email verification',
+            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed
+          };
+
+          mailgun.messages().send(data, function (error, body) {
+            if(error){console.log(error)}
+            console.log(body);
+          });
           res.status(200).json({message: "Account created. You will recieve an email to confirm your account"});
         }
       })  
@@ -176,18 +180,65 @@ module.exports = function(app) {
     });
   });
 
-  apiRoutes.put("/emailconfirmation", function(req, res) {
-    const query = {unconfirmed: req.query.id};
-    db.collection("users").findAndModify({
-      query: query,
-      sort: { created: 1 },
-      update: { $unset: {unconfirmed: "" }}
-    }, function(err, user){
-      if( !user ){
+  apiRoutes.put("/emailverification", function(req, res) {
+    const query = req.query.id;
+    if(!query){
+      res.status(400).json({message: "Invalid link"});
+      return;
+    }
+    db.collection("users").findAndModify(
+      {unconfirmed: query},
+      [],
+      { $unset: {unconfirmed: "" }},
+      { new: false },
+     function(err, user){
+      if(user.value){
+        res.status(200).json({message:"Email confirmed"});
+      }else{
         res.status(401).json({message:"Invalid link"});
-        return;
       }
     });
+  });
+
+  apiRoutes.get("/passwordrecovery", function(req, res) {   
+    const query = req.query.id;
+    console.log(query)
+    if(!query){
+      res.status(400).json({message: "Invalid link"});
+      return;
+    }
+    db.collection("users").findOne({recover: query}, function (err, result) {
+      if (result){
+        res.status(200).json({message: "Valid link"});
+      } else{
+        res.status(400).json({message: "Invalid link"});
+      }  
+    })  
+  });
+
+
+  apiRoutes.post("/passwordreset", function(req, res) {   
+    const query = req.query.id;
+    console.log(query)
+    if(!query){
+      res.status(400).json({message: "Invalid link"});
+      return;
+    }
+    bcrypt.hash(req.body.password, 10, function(err, hash) {
+      db.collection("users").findAndModify(
+        {recover: query},
+        [],
+        { $set: {recover: "", password: hash}},
+        { new: false },
+       function(err, user){
+        console.log(user)
+        if(user.value){
+          res.status(200).json({message:"Email confirmed"});
+        }else{
+          res.status(401).json({message:"Invalid link"});
+        }
+      });
+    });  
   });
 
   apiRoutes.get('/logged', passport.authenticate('jwt', { session: false }), function(req, res) {
@@ -197,10 +248,7 @@ module.exports = function(app) {
   apiRoutes.get('/signout', passport.authenticate('jwt', { session: false }), function(req, res) {
     res.cookie('jwt', "", { maxAge: 0, httpOnly: true });
     res.status(200).json({"message": 'signout'});
-  });
-
-
-
-
-  app.use('/api', apiRoutes); 
+  }); 
 }
+
+// $2a$10$OH99v0Bt20oUVQFcx/J7CeQA2tmMzOwoyzqQe/6Y2kmM4V/.WJBkG

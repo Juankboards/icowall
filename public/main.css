@@ -277,7 +277,7 @@ table {
 	height: 445px;
 }
 
-#login, #signup, #position-confirmation, #icon-registration {
+#login, #signup, #position-confirmation, #icon-registration, #password-recovery {
 	display: block;
 	height: 100%;
 }

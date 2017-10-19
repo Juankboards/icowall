@@ -1,10 +1,39 @@
 // Static data. Will be from db
-alert(document.location)
+let path = window.location.pathname.slice(1)
+
+if(path == "emailverification") {
+  const queue = window.location.href.split("?")[1];
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('PUT', '/api/emailverification?'+queue, false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      swal("Awesome!", "You're email was verified. Now login to your account", "success");
+    } else {
+      swal("Ooos!", "Invalid URL", "error");
+    }
+  };
+  httpRequest.send();  
+}
+
+if(path == "passwordrecovery") {
+  const queue = window.location.href.split("?")[1];
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/passwordrecovery?'+queue, false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("password-recovery-modal").style.display = "block";
+    } else {
+      swal("Ooos!", "Invalid URL", "error");
+    }
+  };
+  httpRequest.send();  
+}
+
 const approvedIcons = {"icons": []};
 const allIcons = {"icons": []}
 
 function getApprovedIcons() {
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('GET', '/api/getapprovedicons', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -15,7 +44,7 @@ function getApprovedIcons() {
 }
 
 function getAllIcons() {
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('GET', '/api/getallicons', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -36,7 +65,7 @@ const infoSection = document.getElementById("info-section"),
     gridSection = document.getElementById("grid-section"),
     listTable = document.getElementById("list-table"),
     infoContainer = document.getElementById("info-container"),
-    unavailableBlocks = []  , //provisional
+    unavailableBlocks = [], 
     iconsContainer = document.getElementById("icons-container"),
     imgPreviewContainer = document.getElementById("buy-grid"),
     gridContainer = document.getElementById("grid-container"),
@@ -47,9 +76,9 @@ const infoSection = document.getElementById("info-section"),
 // will wrap all functionality 
 function init() {
   window.scrollTo(0, 0); //Always start at top of the page
-  arrangeElement(iconsContainer, gridAttributes());
   getApprovedIcons();
   getAllIcons();
+  arrangeElement(iconsContainer, gridAttributes());
   populateHome();
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
@@ -134,8 +163,6 @@ function appendElement (parentElement, childElement) {
 }
 
 function makeElementBlocksUnavailable (element) {
-  //later will be a post request
-  // const blocks = getElementBlocks(element);
   unavailableBlocks.push({"columnBlocks": element.columns, "rowBlocks": element.rows})
 }
 
@@ -378,7 +405,7 @@ function iconRegistration(imgGridBlocks) {
     "image": imgPreview.src
   }
 
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/upload', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -411,6 +438,10 @@ document.getElementById("close-login").onclick = function(event) {
   document.getElementById("login").style.display = "block";
 }
 
+document.getElementById("close-password").onclick = function(event) {
+  document.getElementById("password-recovery-modal").style.display = "none";
+}
+
 document.getElementById("sign-modal").onclick = function(event) {
   document.getElementById("sign-modal").style.display = "none";
   document.getElementById("signup").style.display = "none";
@@ -437,6 +468,10 @@ document.getElementById("signin-submit").onclick = function(event) {
     login();
 }
 
+document.getElementById("password-recovery-submit").onclick = function(event) {
+    passwordReset();
+}
+
 function checkFields(parameter) {
     const input = document.getElementById(parameter);
     if (checkUniqueness(parameter, input)) {
@@ -448,7 +483,7 @@ function checkFields(parameter) {
 
 function checkUniqueness(parameter, input) {
   let unique;
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/uniqueness', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -488,7 +523,7 @@ function registerAccount() {
     "email": form[1].value,
     "password": form[2].value
   }
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/register', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -508,7 +543,7 @@ function login() {
     "username": form[0].value,
     "password": form[1].value
   }
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/login', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -542,7 +577,7 @@ function isLogged() {
 
 function checkSession() {
   let status = {"logged": false, "user": {}};
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('GET', '/api/logged', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -556,10 +591,43 @@ function checkSession() {
 }
 
 function signOut() {
-  var httpRequest = new XMLHttpRequest();            
+  let httpRequest = new XMLHttpRequest();            
   httpRequest.open('GET', '/api/signout', false);
   httpRequest.send();
   return status;
+}
+
+function passwordReset() {
+  if(!checkPasswordConfirmationReset()){
+    return;
+  }
+  const resetInfo = {
+    "password": document.getElementById("password-recovery-form")[0].value
+  }
+  const queue = window.location.href.split("?")[1];
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/api/passwordreset?'+queue, false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      swal("Great!", "Your password was changed successfully", "success");
+      document.getElementById("close-password").click();
+    } else {
+      swal("Ooos!", "Something went wrong", "error");
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(resetInfo)); 
+}
+
+//check this one DRY
+function checkPasswordConfirmationReset() {
+  const password = document.getElementById("new-password-reset"),
+    passwordConfirmation = document.getElementById("confirm-password-reset");
+    if(password.value != passwordConfirmation.value){
+      passwordNotEqual(password, passwordConfirmation);
+      return false;
+    }
+    return true;
 }
 
 function populateHome() {
