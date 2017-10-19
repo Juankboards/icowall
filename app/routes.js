@@ -49,7 +49,7 @@ module.exports = function(app) {
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed
           };
 
-          mailgun.messages().send(data, function (error, body) {
+          mailgun.messages().send(mailInfo, function (error, body) {
             if(error){console.log(error)}
             console.log(body);
           });
