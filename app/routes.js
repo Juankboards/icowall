@@ -43,7 +43,7 @@ module.exports = function(app) {
           res.status(500).json({message: err});
         } else {
           const mailInfo = {
-            from: 'IcoWall <me@samples.mailgun.org>',
+            from: 'IcoWall <juankboards@gmail.com>',
             to: userInfo.email,
             subject: 'IcoWall Email verification',
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed
