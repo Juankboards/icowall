@@ -46,12 +46,20 @@ module.exports = function(app) {
             from: 'IcoWall <juankboards@gmail.com>',
             to: userInfo.email,
             subject: 'IcoWall Email verification',
-            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed
+            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed,
+            html: '<html><div id="email-verification-body"><div id="title"><a href="https://icowal.herokuapp.com"><h3><span id="ico-title">ICO</span><span id="wall-title">WALL</span></h3>\
+            <p>The ICO hall of fame</p></a></div><div><h1>Welcome to IcoWall!</h1><p>Verify your email, click the link below</p>\
+            <a href="https://icowall.herokuapp.com/emailverification?id=8b32820bed0563314246e85b0db453e8f36894ef">IcoWall Email Verification</a></div></div>\
+            <style>@font-face {    font-family: barcode;    src: url("https://icowall.herokuapp.com/fonts/barcode.ttf");}\
+            @font-face {    font-family: superscr; src: url("https://icowall.herokuapp.com/fonts/Old_School_Adventures.ttf");}#title {margin: 0 auto;text-align: center;}\
+            #title h3, #title p, #list-title h3, #list-title p{margin: 0 0 0 5px;}#title p, #list-title p{font-size: 1.03em;text-align: center;}\
+            #ico-title{font-family: "barcode";font-size: 2.2em;position: relative;top: 5px;}\
+            #wall-title{    font-family: "superscr";font-size: 1.7em;background: #fff;color:  #282f3e;padding: 0 0 0 5px;margin-left: 3px;}\
+            #email-verification-body{background-color: #323a4d;width: 80%;max-width: 450px;}</style></html>'
           };
 
           mailgun.messages().send(mailInfo, function (error, body) {
             if(error){console.log(error)}
-            console.log(body);
           });
           res.status(200).json({message: "Account created. You will recieve an email to confirm your account"});
         }
