@@ -7,7 +7,7 @@ const express = require('express'),
     passport = require("passport"),
     aws = require('aws-sdk'),
     crypto = require('crypto'),
-    mailgun = require('mailgun-js')({apiKey: process.env.MAIL_KEY, domain: process.env.MAIL_DOMAIN});
+    mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
     MongoClient = require('mongodb').MongoClient;
 
     let db;
