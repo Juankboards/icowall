@@ -143,6 +143,15 @@ module.exports = function(app) {
               if (err) {
                 res.status(500).json({message: err});
               } else {
+                const mailInfo = {
+                  from: 'IcoWall <juankboards@gmail.com>',
+                  to: req.user.email,
+                  subject: 'IcoWall Blocks reservation',
+                  text: 'Thanks for reserve on IcoWall!\n\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public'
+                };
+                mailgun.messages().send(mailInfo, function (error, body) {
+                  if(error){console.log(error)}
+                });
                 res.status(200).json({message: "Icon stored. You will recieve an email to confirm your purchase"});
               }
             })
