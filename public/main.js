@@ -571,8 +571,10 @@ function login() {
               swal.close();
           }
         });
+      } else{
+        swal("Sorry!", JSON.parse(this.responseText).message, "error");
       }
-      swal("Sorry!", JSON.parse(this.responseText).message, "error");
+      
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
