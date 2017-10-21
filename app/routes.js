@@ -51,8 +51,8 @@ module.exports = function(app) {
             <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
             <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed'">\
-            https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed'</a></div></div></html>'
+            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed+'">\
+            https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>'
           };
 
           mailgun.messages().send(mailInfo, function (error, body) {
@@ -217,8 +217,8 @@ module.exports = function(app) {
             <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
             <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed'">\
-            https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed'</a></div></div></html>'
+            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed+'">\
+            https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed+'</a></div></div></html>'
           };
           mailgun.messages().send(mailInfo, function (error, body) {
             if(error){
