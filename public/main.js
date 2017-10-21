@@ -549,11 +549,47 @@ function login() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-login").click();
     } else {
+      if (this.status == 402) {
+        swal({
+          title: "Almost there!",
+          text: JSON.parse(this.responseText).message, 
+          icon: "success",
+          buttons: {
+            resend: {
+              text: "Resend verification email",
+              value: "resend",
+            },
+            Continue: true,
+          }
+      }).then((value) => {
+          switch (value) {
+            case "resend":
+                // resendVerificationEmail(form[0].value);
+                swal("Sorry!", JSON.parse(this.responseText).message, "error");
+              break;         
+            default:
+              swal.close();
+          }
+        });
       swal("Sorry!", JSON.parse(this.responseText).message, "error");
     }
   };
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send(JSON.stringify(userInfo));
+}
+
+function resendVerificationEmail(username) {
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/resendVerificationEmail?username='+username, false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      swal("Check your email", "Your verification email was sent", "success");
+    } else {
+      swal("Sorry!", JSON.parse(this.responseText).message, "error");
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send();
 }
 
 function isLogged() {

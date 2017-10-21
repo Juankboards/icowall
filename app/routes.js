@@ -47,15 +47,12 @@ module.exports = function(app) {
             to: userInfo.email,
             subject: 'IcoWall Email verification',
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed,
-            html: '<html><div id="email-verification-body"><div id="title"><a href="https://icowall.herokuapp.com"><h3><span id="ico-title">ICO</span><span id="wall-title">WALL</span></h3>\
-            <p>The ICO hall of fame</p></a></div><div><h1>Welcome to IcoWall!</h1><p>Verify your email, click the link below</p>\
-            <a href="https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed+'">IcoWall Email Verification</a></div>\
-            <style>@font-face {    font-family: barcode;    src: url("https://icowall.herokuapp.com/fonts/barcode.ttf");}\
-            @font-face {    font-family: superscr; src: url("https://icowall.herokuapp.com/fonts/Old_School_Adventures.ttf");}#title {margin: 0 auto;text-align: center;}\
-            #title h3, #title p, #list-title h3, #list-title p{margin: 0 0 0 5px;}#title p, #list-title p{font-size: 1.03em;text-align: center;}\
-            #ico-title{font-family: "barcode";font-size: 2.2em;position: relative;top: 5px;}\
-            #wall-title{    font-family: "superscr";font-size: 1.7em;background: #fff;color:  #282f3e;padding: 0 0 0 5px;margin-left: 3px;}\
-            #email-verification-body{background-color: #323a4d;width: 80%;max-width: 450px;}</style></div></html>'
+            html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
+            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+            </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
+            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed'">\
+            https://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed'</a></div></div></html>'
           };
 
           mailgun.messages().send(mailInfo, function (error, body) {
@@ -155,7 +152,13 @@ module.exports = function(app) {
                   from: 'IcoWall <juankboards@gmail.com>',
                   to: req.user.email,
                   subject: 'IcoWall Blocks reservation',
-                  text: 'Thanks for reserve on IcoWall!\n\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public'
+                  text: '\n\n'
+                  html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+                        <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
+                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+                        </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
+                        <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
+                        </div></div></html>'
                 };
                 mailgun.messages().send(mailInfo, function (error, body) {
                   if(error){console.log(error)}
@@ -180,7 +183,7 @@ module.exports = function(app) {
       }
 
       if(user.unconfirmed){
-        res.status(401).json({message:"You need to confirm your email to Login"});
+        res.status(402).json({message:"You need to confirm your email to Login"});
         return;
       }
       
@@ -194,6 +197,39 @@ module.exports = function(app) {
          res.status(401).json({message:"passwords did not match"});
         }
       });
+    });
+  });
+
+  apiRoutes.put("/resendVerificationEmail", function(req, res) {
+    if(!req.query.username){
+      res.status(400).json({message: "Invalid request"});
+      return;
+    }
+    const query = {username: req.query.username};
+    db.collection("users").findOne(query, function(err, user){
+      if(user.value){
+        const mailInfo = {
+            from: 'IcoWall <juankboards@gmail.com>',
+            to: user.email,
+            subject: 'IcoWall Email verification',
+            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+user.unconfirmed,
+            html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
+            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+            </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
+            <a style="color: #fff; word-wrap: break-word;" href="https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed'">\
+            https://icowall.herokuapp.com/emailverification?id='+user.unconfirmed'</a></div></div></html>'
+          };
+          mailgun.messages().send(mailInfo, function (error, body) {
+            if(error){
+              res.status(408).json({message:"Error sending the email"}); 
+              return;
+            }
+          });
+        res.status(200).json({message:"Email confirmed"});
+      }else{
+        res.status(401).json({message:"Invalid link"});
+      }
     });
   });
 
