@@ -564,8 +564,7 @@ function login() {
       }).then((value) => {
           switch (value) {
             case "resend":
-                // resendVerificationEmail(form[0].value);
-                swal("Sorry!", JSON.parse(this.responseText).message, "error");
+                resendVerificationEmail(form[0].value);
               break;         
             default:
               swal.close();
