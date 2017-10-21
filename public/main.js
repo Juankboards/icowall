@@ -571,6 +571,7 @@ function login() {
               swal.close();
           }
         });
+      }
       swal("Sorry!", JSON.parse(this.responseText).message, "error");
     }
   };
