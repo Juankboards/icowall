@@ -152,7 +152,7 @@ module.exports = function(app) {
                   from: 'IcoWall <juankboards@gmail.com>',
                   to: req.user.email,
                   subject: 'IcoWall Blocks reservation',
-                  text: '\n\n'
+                  text: 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
                   html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                         <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowal.herokuapp.com">\
                         <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
