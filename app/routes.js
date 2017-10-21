@@ -200,7 +200,7 @@ module.exports = function(app) {
     });
   });
 
-  apiRoutes.put("/resendVerificationEmail", function(req, res) {
+  apiRoutes.get("/resendVerificationEmail", function(req, res) {
     if(!req.query.username){
       res.status(400).json({message: "Invalid request"});
       return;
@@ -225,8 +225,9 @@ module.exports = function(app) {
               res.status(408).json({message:"Error sending the email"}); 
               return;
             }
+            console.log('succesfully uploaded the image!');
           });
-        res.status(200).json({message:"Email confirmed"});
+          res.status(200).json({message:"Email confirmed"});
       }else{
         res.status(401).json({message:"Invalid link"});
       }
