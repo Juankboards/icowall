@@ -208,7 +208,7 @@ module.exports = function(app) {
     const query = {username: req.query.username};
     db.collection("users").findOne(query, function(err, user){
       console.log(user)
-      if(user.value){
+      if(user){
         const mailInfo = {
             from: 'IcoWall <juankboards@gmail.com>',
             to: user.email,
