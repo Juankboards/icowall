@@ -76,6 +76,7 @@
 					<input name="username" type="text" id="username-login" placeholder="Username" required>
 					<br>			
 					<input name="password" type="password" id="password-login" placeholder="Password" required>
+					<p id="forgot-password">Forgot password?</p>
 					<button type="button" id="signin-submit">LOG IN</button>
 					<p>Don't have an account? <a id="register-link">Register</a>.</p>
 				</form>
@@ -94,11 +95,18 @@
 					<p>Already have an account? <a id="login-link">Login</a>.</p>
 				</form>
 			</div>
+			<div id="restore-password-email">
+				<h3><span id="ico-title">FORGOT PASSWORD</span></h3>			
+				<form id="password-reset-email-form">
+					<h4>Please enter your email to send you a recovery link.</h4>
+					<input name="email" type="email" id="user-email" placeholder="Email" required>
+					<button type="button" id="password-reset-email">SEND</button>
+				</form>
+			</div>
 		</div>
 	</div>
 	<div id="buy-modal" class="modal">
-		<div class="modal-content">
-			
+		<div class="modal-content">			
 			<div id="position-confirmation">
 				<h3><span id="ico-title">CONFIRM POSITION</span></h3>
 				<p id="position-info"></p>

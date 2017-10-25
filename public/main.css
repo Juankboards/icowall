@@ -277,7 +277,7 @@ table {
 	height: 445px;
 }
 
-#login, #signup, #position-confirmation, #icon-registration, #password-recovery {
+#login, #signup, #position-confirmation, #icon-registration, #password-recovery, #restore-password-email {
 	display: block;
 	height: 100%;
 }
@@ -293,7 +293,17 @@ form {
 	position: relative;
 	top: 45%;
 	transform: translateY(-50%);
+	text-align: left;
+}
+
+form p {
 	text-align: center;
+}
+
+form h4	{
+	margin: 0 0 10px 0;
+	font-size: 1.2em;
+	font-weight: 100;
 }
 
 #signup form {
@@ -358,8 +368,18 @@ textarea {
 	border: none;
 }
 
-#signup, #icon-registration {
+#signup, #icon-registration, #restore-password-email {
 	display: none;
+}
+
+#password-login{
+	margin: 0;
+}
+
+#forgot-password {
+	margin: 0 0 10px 0;
+	display: inline-block;
+	cursor: pointer;
 }
 
 

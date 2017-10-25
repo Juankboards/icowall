@@ -1,4 +1,4 @@
-// Static data. Will be from db
+// // Static data. Will be from db
 let path = window.location.pathname.slice(1)
 
 if(path == "emailverification") {
@@ -404,20 +404,22 @@ function iconRegistration(imgGridBlocks) {
     "rows": [imgBlocks[2], imgBlocks[3]],
     "image": imgPreview.src
   }
+  document.getElementById("icon-registration").style.display = "none";
+  document.getElementById("stripe-payment").style.display = "block";
 
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/upload', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("close-buy").click();
-      swal("Well done!", JSON.parse(this.responseText).message, "success");
-    } else {
-      swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.withCredentials = true;
-  httpRequest.send(JSON.stringify(imgInfo));
+  // let httpRequest = new XMLHttpRequest();            
+  // httpRequest.open('POST', '/api/upload', false);
+  // httpRequest.onreadystatechange = function () {
+  //   if (this.readyState == 4 && this.status == 200) {
+  //     document.getElementById("close-buy").click();
+  //     swal("Well done!", JSON.parse(this.responseText).message, "success");
+  //   } else {
+  //     swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
+  //   }
+  // };
+  // httpRequest.setRequestHeader("Content-type", "application/json");
+  // httpRequest.withCredentials = true;
+  // httpRequest.send(JSON.stringify(imgInfo));
 }
 
 
@@ -435,6 +437,7 @@ function modalClose(modal){
 document.getElementById("close-login").onclick = function(event) {
   document.getElementById("sign-modal").style.display = "none";
   document.getElementById("signup").style.display = "none";
+  document.getElementById("restore-password-email").style.display = "none";
   document.getElementById("login").style.display = "block";
 }
 
@@ -674,11 +677,41 @@ function populateHome() {
 }
 
 document.getElementById("register-link").onclick = function(event) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("signup").style.display = "block";
+  document.getElementById("login").style.display = "none";
+  document.getElementById("restore-password-email").style.display = "none";
+  document.getElementById("signup").style.display = "block";
 }
 
 document.getElementById("login-link").onclick = function(event) {
-        document.getElementById("signup").style.display = "none";
-        document.getElementById("login").style.display = "block";
+  document.getElementById("signup").style.display = "none";
+  document.getElementById("restore-password-email").style.display = "none";
+  document.getElementById("login").style.display = "block";
+}
+
+document.getElementById("forgot-password").onclick = function(event) {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("signup").style.display = "none";
+  document.getElementById("restore-password-email").style.display = "block";
+}
+
+document.getElementById("password-reset-email").onclick = function(event) {
+  passwordResetEmail();
+}
+
+function passwordResetEmail() {
+  const email = {
+    "email": document.getElementById("password-reset-email-form")[0].value
+  }
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/api/forgotpassword', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      swal("Good news!", "Password reset link have been mailed", "success");
+      document.getElementById("close-password").click();
+    } else {
+      swal("Ooos!", JSON.parse(this.responseText).message, "error");
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(email)); 
 }
