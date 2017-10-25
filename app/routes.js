@@ -43,7 +43,7 @@ module.exports = function(app) {
           res.status(500).json({message: err});
         } else {
           const mailInfo = {
-            from: 'IcoWall <juankboards@gmail.com>',
+            from: 'IcoWall <info@icowall.io>',
             to: userInfo.email,
             subject: 'IcoWall Email verification',
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+userInfo.unconfirmed,
@@ -149,7 +149,7 @@ module.exports = function(app) {
                 res.status(500).json({message: err});
               } else {
                 const mailInfo = {
-                  from: 'IcoWall <juankboards@gmail.com>',
+                  from: 'IcoWall <info@icowall.io>',
                   to: req.user.email,
                   subject: 'IcoWall Blocks reservation',
                   text: 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
