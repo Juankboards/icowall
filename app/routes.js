@@ -321,10 +321,10 @@ module.exports = function(app) {
           mailgun.messages().send(mailInfo, function (error, body) {
             if(error){
               res.status(408).json({message:"Error sending the email"}); 
-              return;
+            }else{
+              res.status(200).json({message:"Email sent"});
             }
           });
-        res.status(200).json({message:"Email sent"});
       }else{
         res.status(401).json({message:"Invalid email"});
       }
