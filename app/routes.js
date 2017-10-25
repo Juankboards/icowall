@@ -308,7 +308,7 @@ module.exports = function(app) {
       if(user.value){
         const mailInfo = {
             from: 'IcoWall <info@icowall.io>',
-            to: user.email,
+            to: user.value.email,
             subject: 'IcoWall Password reset',
             text: 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttp://icowall.io/passwordrecovery?id='+user.value.recover,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
