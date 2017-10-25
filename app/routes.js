@@ -210,7 +210,7 @@ module.exports = function(app) {
       console.log(user)
       if(user){
         const mailInfo = {
-            from: 'IcoWall <juankboards@gmail.com>',
+            from: 'IcoWall <info@icowall.io>',
             to: user.email,
             subject: 'IcoWall Email verification',
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://icowall.herokuapp.com/emailverification?id='+user.unconfirmed,
