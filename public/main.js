@@ -298,10 +298,14 @@ function tempImgPreviewTopPosition (event, blocksX, blocksY, blockSize) {
 function setImgPreviewPosition (imgGridBlocks){
   if(imgPreview.src != "" && !imgPreview.className){  
     const imgPrevBlocks = getImgPrevBlocks(imgGridBlocks);
+    const cost = blockCost();
     if(validPosition(...imgPrevBlocks)){
       document.getElementById("buy-modal").style.display = "block";
       document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
-      <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) + "<br>Block Cost per month: $1<br>Total cost per month: $" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*1);
+      <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
+      + "<br>Block cost per month: " + cost + " BTC"
+      + "<br>Rent period: " + document.getElementById("rent-months").value + " Months" 
+      + "<br>Total cost: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-months").value)*cost).toFixed(8) + " BTC";
       // freezeImgPreview();
     }
   }
@@ -323,6 +327,23 @@ function getImgPrevBlocks(imgGridBlocks) {
    lastYblock = firstYblock + Math.round(imgPreview.height/imgGridBlocks.size) - 1;
 
    return [firstXblock, lastXblock, firstYblock, lastYblock];
+}
+
+function blockCost() {
+  let cost = 0;
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/blockcost', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      cost = JSON.parse(this.responseText).message;
+    } else {
+      swal("Sorry!", JSON.parse(this.responseText).message, "error");
+      document.getElementById("home").click();
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send();
+  return cost;
 }
 
 function freezeImgPreview() {
@@ -402,24 +423,23 @@ function iconRegistration(imgGridBlocks) {
     "rowSize": document.getElementById("blocks-rows").value,
     "columns": [imgBlocks[0], imgBlocks[1]],
     "rows": [imgBlocks[2], imgBlocks[3]],
+    "period": document.getElementById("rent-months").value,
     "image": imgPreview.src
   }
-  document.getElementById("icon-registration").style.display = "none";
-  document.getElementById("stripe-payment").style.display = "block";
 
-  // let httpRequest = new XMLHttpRequest();            
-  // httpRequest.open('POST', '/api/upload', false);
-  // httpRequest.onreadystatechange = function () {
-  //   if (this.readyState == 4 && this.status == 200) {
-  //     document.getElementById("close-buy").click();
-  //     swal("Well done!", JSON.parse(this.responseText).message, "success");
-  //   } else {
-  //     swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
-  //   }
-  // };
-  // httpRequest.setRequestHeader("Content-type", "application/json");
-  // httpRequest.withCredentials = true;
-  // httpRequest.send(JSON.stringify(imgInfo));
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/api/upload', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("close-buy").click();
+      swal("Well done!", JSON.parse(this.responseText).message, "success");
+    } else {
+      swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.withCredentials = true;
+  httpRequest.send(JSON.stringify(imgInfo));
 }
 
 

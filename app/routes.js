@@ -7,8 +7,9 @@ const express = require('express'),
     passport = require("passport"),
     aws = require('aws-sdk'),
     crypto = require('crypto'),
-    mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN});
-    MongoClient = require('mongodb').MongoClient;
+    mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN}),
+    MongoClient = require('mongodb').MongoClient,
+    getJSON = require('get-json');
 
     let db;
 
@@ -101,7 +102,33 @@ module.exports = function(app) {
     })  
   });
 
+  apiRoutes.get("/blockcost", passport.authenticate('jwt', { session: false }), function (req, res) {
+    getCostInBTC().then((cost) => {
+      if(!cost){
+          res.status(404).json({message: "BTC price unavailable"});
+      }else{
+        res.status(200).json({message: cost});
+      } 
+    });
+  });
+
+  function getCostInBTC() {
+    return new Promise((resolve,reject) => {
+      let cost = 0;
+      getJSON('https://api.coindesk.com/v1/bpi/currentprice.json', function(error, response){ 
+        if(error){
+          reject(error)
+        }else{
+          cost = parseFloat((process.env.BLOCK_COST/response.bpi['USD'].rate_float + 0.00000001).toFixed(8));  
+          resolve(cost);    
+        } 
+      })
+    })
+  }
+
   apiRoutes.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
+    getCostInBTC().then((cost) => {
+      const blockCost = cost;
       const icon = {
         "name": req.body.name,
         "description": req.body.description,
@@ -112,6 +139,8 @@ module.exports = function(app) {
         "totalBlocks": parseInt(req.body.columnSize)*parseInt(req.body.rowSize),
         "columns": req.body.columns,
         "rows": req.body.rows,
+        "period": req.body.period,
+        "cost": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCost,
         "approved": false,
         "userId": req.user._id
       };
@@ -169,6 +198,7 @@ module.exports = function(app) {
             })
           }
       });
+    });
   });
 
   apiRoutes.post("/login", function(req, res) {
