@@ -65,7 +65,7 @@ module.exports = function(app) {
   });
 
   apiRoutes.get('/getapprovedicons', (req, res) => {
-    db.collection("icons").find({approved: true}).toArray(function (err, result) {
+    db.collection("icons").find({approved: true}).sort({totalBlocks: -1}).toArray(function (err, result) {
       if (err) throw err
       if (result.length > 0){
         res.status(200).json({"icons": result});
@@ -109,6 +109,7 @@ module.exports = function(app) {
         "date": req.body.date,
         "columnSize": req.body.columnSize,
         "rowSize": req.body.rowSize,
+        "totalBlocks": parseInt(req.body.columnSize)*parseInt(req.body.rowSize),
         "columns": req.body.columns,
         "rows": req.body.rows,
         "approved": false,
