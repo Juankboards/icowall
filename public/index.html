@@ -127,7 +127,62 @@
 					<br>			
 					<textarea rows="5" cols="30" placeholder="Description" id="email" ></textarea>
 					<input type="url" id="url" placeholder="http://www.example.com">
-					<input type="text" id="date" placeholder="yyyy-mm-dd">
+					<select class="ico-date" id="month" name="month">
+						<option value="0" selected><span class="typ">Month</span></option>
+						<option value="1"><span class="typ">January</span></option>
+						<option value="2"><span class="typ">February</span></option>
+						<option value="3"><span class="typ">March</span></option>
+						<option value="4"><span class="typ">April</span></option>
+						<option value="5"><span class="typ">May</span></option>
+						<option value="6"><span class="typ">June</span></option>
+						<option value="7"><span class="typ">July</span></option>
+						<option value="8"><span class="typ">August</span></option>
+						<option value="9"><span class="typ">September</span></option>
+						<option value="10"><span class="typ">October</span></option>
+						<option value="11"><span class="typ">November</span></option>
+						<option value="12"><span class="typ">December</span></option>
+					</select>
+					<select class="ico-date" id="day" name="day">
+						<option value="0" selected><span class="typ">Day</span></option>
+						<option value="01"><span class="typ">01</span></option>
+						<option value="02"><span class="typ">02</span></option>
+						<option value="03"><span class="typ">03</span></option>
+						<option value="04"><span class="typ">04</span></option>
+						<option value="05"><span class="typ">05</span></option>
+						<option value="06"><span class="typ">06</span></option>
+						<option value="07"><span class="typ">07</span></option>
+						<option value="08"><span class="typ">08</span></option>
+						<option value="09"><span class="typ">09</span></option>
+						<option value="10"><span class="typ">10</span></option>
+						<option value="11"><span class="typ">11</span></option>
+						<option value="12"><span class="typ">12</span></option>
+						<option value="13"><span class="typ">13</span></option>
+						<option value="14"><span class="typ">14</span></option>
+						<option value="15"><span class="typ">15</span></option>
+						<option value="16"><span class="typ">16</span></option>
+						<option value="17"><span class="typ">17</span></option>
+						<option value="18"><span class="typ">18</span></option>
+						<option value="19"><span class="typ">19</span></option>
+						<option value="20"><span class="typ">20</span></option>
+						<option value="21"><span class="typ">21</span></option>
+						<option value="22"><span class="typ">22</span></option>
+						<option value="23"><span class="typ">23</span></option>
+						<option value="24"><span class="typ">24</span></option>
+						<option value="25"><span class="typ">25</span></option>
+						<option value="26"><span class="typ">26</span></option>
+						<option value="27"><span class="typ">27</span></option>
+						<option value="28"><span class="typ">28</span></option>
+						<option value="29"><span class="typ">29</span></option>
+						<option value="30"><span class="typ">30</span></option>
+						<option value="31"><span class="typ">31</span></option>
+					</select>
+					<select class="ico-date" id="year" name="year">
+						<option value="0" selected><span class="typ">Year</span></option>
+						<option value="2017"><span class="typ">2017</span></option>
+						<option value="2018"><span class="typ">2018</span></option>
+						<option value="2019"><span class="typ">2019</span></option>
+						<option value="2020"><span class="typ">2020</span></option>
+					</select>
 					<button type="button" id="ico-registration-submit">SUBMIT</button>
 				</form>
 			</div>
@@ -147,9 +202,34 @@
 			</div>
 		</div>
 	</div>
+	<section id="feed">
+		<div class="top-tape">
+			<p>Follow us on Twitter</p>
+			<a class="twitter-follow-button"
+			  href="https://twitter.com/icowall" data-show-count="false">
+			 @icowall</a>
+		</div>
+		<a class="twitter-timeline"
+		  href="https://twitter.com/juankboards/lists/ico">
+		</a>
+		<div class="bottom-tape"></div>
+	</section>
 </body>
 <script src="main.js"></script>
+<script>window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));</script>
 </html>
-
-
-<!-- efe8b793583ea3102958ce92a5d9911ed98dc7f8 -->

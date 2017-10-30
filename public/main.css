@@ -342,6 +342,15 @@ form button {
 	text-align: center;
 }
 
+.ico-date {
+	color: #000;
+	height: 45px;
+	border: none;
+	background-color: #fffffe;
+	width: 32.2%;
+	margin: 0 0 10px 0;
+}
+
 #cancel-position {
 	margin: 0 4% 0 0;
 	background-color: rgba(150,0,0,0.8);
@@ -382,7 +391,9 @@ textarea {
 	cursor: pointer;
 }
 
-
+#feed {
+	display: none;
+}
 
 @media only screen and (min-width: 600px) {
 	th, td {
@@ -454,5 +465,43 @@ textarea {
 
 	th, td {
 		font-size: 1.35em;
+	}
+
+	#feed {
+		display: block;
+		position: absolute;
+		top: 20%;
+		right: 15px;
+		width: 15%;
+		height: 78%;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		border-radius: 0;
+		border: none;
+		min-height: unset;
+		margin: 0;
+	}
+
+	.top-tape{
+		position: fixed;
+		top: 20%;
+		width: 15%;
+		height: 100px;
+		background-color: #282f3e;
+		padding: 20px 10px;
+	}
+
+	.top-tape p{
+		font-family: 'superscr';
+		font-size: 0.8em;
+		margin: 0 0 15px 0;
+	}
+
+	.bottom-tape{
+		position: fixed;
+		bottom: 2%;
+		width: 15%;
+		height: 10px;
+		background-color: #282f3e;
 	}
 }

@@ -61,6 +61,7 @@ function getAllIcons() {
 
 const infoSection = document.getElementById("info-section"),
     listSection = document.getElementById("list-section"),
+    feedSection = document.getElementById("feed"),
     uploadSection = document.getElementById("upload-section"),
     gridSection = document.getElementById("grid-section"),
     listTable = document.getElementById("list-table"),
@@ -83,7 +84,7 @@ function init() {
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"]), listSection);
-  addEvent(document.getElementById("home"), "click", populateHome, gridSection);
+  addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
@@ -191,6 +192,9 @@ function showSection(...elements) {
     elements.forEach((element) => {
         element.style.display = "block";
         document.getElementById("tools").style.display = "none";
+        if(window.innerWidth < 1150) {
+          document.getElementById("feed").style.display = "none";
+        }
     })
   }
 }
@@ -210,15 +214,21 @@ function cleanElement (element) {
   }
 } 
 
+function fillDate(value) {
+  const date = value<10?"0"+value:value;
+  return date;
+}
+
 function populateTable (parentElement, data) {
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element) => {
+      let date = new Date(element.date);
       let newRow = populateElement(parentElement, {"type": "TR", "hasText": false, "text": "", "attributes": []});
       let imgColumn = populateElement(newRow, {"type": "TD", "hasText": false, "text": "", "attributes": [{"type": "class", "value": "img-column"}]});
       populateElement(imgColumn, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": element.filename}]});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": []});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.description, "attributes": []});
-      populateElement(newRow, {"type": "TD", "hasText": true, "text": element.date, "attributes": []});
+      populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": []});
 
       imgColumn.onclick = () => {
         populateInfo(infoContainer, element);
@@ -391,6 +401,7 @@ function loadImage() {
   const img = inputImg.files[0];
   if(img) {
     display.readAsDataURL(img);
+    document.getElementById("feed").style.display = "none";
     document.getElementById("tools").style.display = "block";
   }
 }
@@ -413,12 +424,58 @@ document.getElementById("blocks-rows").onchange = function (event) {
 
 function iconRegistration(imgGridBlocks) {
   const formInfo = document.getElementById("ico-registration-form");
+  let error = [];
+  let submit = true;
+  
+  if(!checkFill(formInfo[0].value)){
+    submit = false;
+    error.push("Enter an ICO name")
+    formInfo[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(formInfo[1].value)){
+    submit = false;
+    error.push("Enter an ICO description")
+    formInfo[1].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(formInfo[2].value)){
+    submit = false;
+    error.push("Enter an ICO website")
+    formInfo[2].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[3].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start month")
+    formInfo[3].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[4].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start day")
+    formInfo[4].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[5].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start year")
+    formInfo[5].style.border = "1px solid #E34234";
+  }
+
+  console.log(formInfo[3].value,formInfo[4].value,formInfo[5].value)
+
+  if(!submit){
+    swal("Watch out!", error.join(", "), "warning");
+    return false;
+  }
+
   const imgBlocks = getImgPrevBlocks(imgGridBlocks);
   const imgInfo = {
     "name": formInfo[0].value,
     "description": formInfo[1].value,
     "web": formInfo[2].value,
-    "date": formInfo[3].value,
+    "date": new Date(parseInt(formInfo[5].value),parseInt(formInfo[3].value)-1,parseInt(formInfo[4].value)),
     "columnSize": document.getElementById("blocks-columns").value,
     "rowSize": document.getElementById("blocks-rows").value,
     "columns": [imgBlocks[0], imgBlocks[1]],
@@ -476,13 +533,13 @@ document.getElementById("close-buy").onclick = function(event) {
   showSection(gridSection);
   document.getElementById("icon-registration").style.display = "none";
   document.getElementById("position-confirmation").style.display = "block";
+  document.getElementById("home").click();
 }
 
 document.getElementById("signup-submit").onclick = function(event) {
-  const verifiedPsw = checkPasswordConfirmation()
   const validUsername = checkFields("username")
   const validEmail = checkFields("email")
-  if (verifiedPsw && validUsername && validEmail) {
+  if (validUsername && validEmail) {
     registerAccount();
   }
 }
@@ -534,18 +591,68 @@ function checkPasswordConfirmation() {
 }
 
 function passwordNotEqual(field1, field2){
-  swal("Watch out!", "The password didn't match", "warning");
+  // swal("Watch out!", "The password didn't match", "warning");
   field1.value = "";
   field2.value = "";
 }
 
 function registerAccount() {
+  let submit = true;
+  let error = [];
   const form = document.getElementById("signup-form");
   const userInfo = {
     "username": form[0].value,
     "email": form[1].value,
     "password": form[2].value
   }
+
+  if(!checkFill(userInfo.username)){
+    submit = false;
+    error.push("Enter a username")
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(checkSpace(userInfo.username)){
+    submit = false;
+    error.push("Don't use spaces on your username");
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(userInfo.email)){
+    submit = false;
+    error.push("Enter a valid email");
+    form[1].style.border = "1px solid #E34234";
+  } else {
+    if(!checkEmail(userInfo.email)){
+      submit = false;
+      error.push("The email you provided is invalid");
+      form[1].style.border = "1px solid #E34234";
+    }
+  }
+
+  if(!checkFill(userInfo.password)){
+    submit = false;
+    error.push("Enter a password")
+    form[2].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(form[3].value)){
+    submit = false;
+    error.push("Confirm your password")
+    form[3].style.border = "1px solid #E34234";
+  }
+
+  if(!checkPasswordConfirmation()){
+    submit = false;
+    error.push("The passwords didn't match"); 
+  }
+  
+
+  if(!submit){
+    swal("Watch out!", error.join(", "), "warning");
+    return false;
+  }
+
   let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/register', false);
   httpRequest.onreadystatechange = function () {
@@ -561,11 +668,27 @@ function registerAccount() {
 }
 
 function login() {
+  let submit = true;
   const form = document.getElementById("signin-form");
   const userInfo = {
     "username": form[0].value,
     "password": form[1].value
   }
+  if(!checkFill(userInfo.username)){
+    submit = false;
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(userInfo.password)){
+    submit = false;
+    form[1].style.border = "1px solid #E34234";
+  }
+
+  if(!submit){
+    return false;
+  }
+
+
   let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/login', false);
   httpRequest.onreadystatechange = function () {
@@ -735,3 +858,33 @@ function passwordResetEmail() {
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send(JSON.stringify(email)); 
 }
+
+function checkEmail(email) {
+  const validEmail = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$/.test(email.toLowerCase());
+  return validEmail;
+}
+
+function checkFill(value) {
+  if(value.length < 1) {
+    return false;
+  }
+  return true;
+}
+
+function checkSpace(value) {
+  const validEmail = /\s/.test(value);
+  return validEmail;
+}
+
+// function evaluateForm(form) {
+
+
+
+//   if () {
+//       input.style.border = "none";
+//       unique = true;
+//     } else {
+//       input.style.border = "1px solid #E34234";
+//       swal("Ooops!", JSON.parse(this.responseText).message, "warning");
+//       unique =  false;
+// }
