@@ -395,6 +395,11 @@ textarea {
 	display: none;
 }
 
+.typ {
+	background-color: #282f3e;
+	color: #fff;
+}
+
 @media only screen and (min-width: 600px) {
 	th, td {
 		font-size: 1em;
