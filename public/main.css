@@ -157,9 +157,9 @@ li a:hover i {
 
 section {
 	width: 100%;
-	min-height: 100%;
+	/*min-height: 100%;*/
 	text-align: center;
-	padding: 150px 0 149px 0;	
+	padding: 150px 0 30px 0;	
 }
 
 #grid-container {
@@ -395,9 +395,44 @@ textarea {
 	display: none;
 }
 
-.typ {
+#icon-registration option {
 	background-color: #282f3e;
 	color: #fff;
+}
+
+.subscribe-wrapper {
+	/*position: relative;
+	bottom: 70px;*/
+	margin-bottom: 75px;
+}
+
+.subscribe-wrapper #mc_embed_signup {
+	background-color: transparent;
+}
+
+.subscribe-wrapper #mc-embedded-subscribe-form {
+	width: 85%;
+	transform: none;
+	top: 0;
+}
+
+.subscribe-wrapper #mc_embed_signup label {
+	font-family: 'superscr';
+	font-size: 0.7em;
+}
+
+.subscribe-wrapper #mc_embed_signup input.email {
+	background-color: #fff;
+	border: 1px solid #282f3e;
+	border-radius: 0;
+	color: #000;
+	text-align: center;
+	font-family: 'Jura';
+}
+
+.subscribe-wrapper #mc_embed_signup .button {
+	background-color: #282f3e;
+	border: 1px solid #ABB0B2;
 }
 
 @media only screen and (min-width: 600px) {
@@ -424,7 +459,7 @@ textarea {
 
 	#title {
 		top: 20px;
-		right: 20px;
+		right: 15px;
 		transform: unset;
 	}
 
@@ -475,10 +510,10 @@ textarea {
 	#feed {
 		display: block;
 		position: absolute;
-		top: 20%;
+		top: 15%;
 		right: 15px;
-		width: 15%;
-		height: 78%;
+		width: 17%;
+		height: 68%;
 		overflow-y: scroll;
 		overflow-x: hidden;
 		border-radius: 0;
@@ -489,8 +524,8 @@ textarea {
 
 	.top-tape{
 		position: fixed;
-		top: 20%;
-		width: 15%;
+		top: 15%;
+		width: 17%;
 		height: 100px;
 		background-color: #282f3e;
 		padding: 20px 10px;
@@ -504,9 +539,40 @@ textarea {
 
 	.bottom-tape{
 		position: fixed;
-		bottom: 2%;
-		width: 15%;
+		bottom: 17%;
+		width: 17%;
 		height: 10px;
 		background-color: #282f3e;
+	}
+
+	.subscribe-wrapper {
+		position: absolute;
+		bottom: 15px;
+		right: 15px;
+		text-align: center;
+		margin: 0;
+		width: 17%;
+	}
+
+	.subscribe-wrapper #mc-embedded-subscribe-form {
+		width: 100%;
+	}
+
+	.subscribe-wrapper #mc_embed_signup label {
+		/*font-size: 0.em;*/
+	}
+
+	.subscribe-wrapper #mc_embed_signup input.email {
+		/*text-align: left;*/
+		width: 70%;
+		/*margin-bottom: 5px;*/
+	}
+
+	.subscribe-wrapper #mc_embed_signup .button {
+		padding: 0 10px;
+	}
+
+	.subscribe-wrapper #mc_embed_signup .clear {
+		width: 27%
 	}
 }
