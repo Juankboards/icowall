@@ -62,6 +62,7 @@ function getAllIcons() {
 const infoSection = document.getElementById("info-section"),
     listSection = document.getElementById("list-section"),
     feedSection = document.getElementById("feed"),
+    subsSection = document.getElementById("subscribe-wrapper"),
     uploadSection = document.getElementById("upload-section"),
     gridSection = document.getElementById("grid-section"),
     listTable = document.getElementById("list-table"),
@@ -84,7 +85,7 @@ function init() {
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"]), listSection);
-  addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection);
+  addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection, subsSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
   addEvent(display, "loadend", () => imgPreview.src = display.result); 

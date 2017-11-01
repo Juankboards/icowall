@@ -50,7 +50,7 @@ module.exports = function(app) {
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttp://www.icowall.io/emailverification?id='+userInfo.unconfirmed,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
             <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://www.icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
             <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
             http://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>'
@@ -185,7 +185,7 @@ module.exports = function(app) {
                   text: 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
                   html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                         <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://www.icowall.io">\
-                        <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+                        <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
                         </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
                         <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
                         </div></div></html>'
@@ -247,7 +247,7 @@ module.exports = function(app) {
             text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttp://www.icowall.io/emailverification?id='+user.unconfirmed,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
             <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
             <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
             http://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>'
@@ -344,7 +344,7 @@ module.exports = function(app) {
             text: 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttp://www.icowall.io/passwordrecovery?id='+recover_string,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
             <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">The ICO\'s hall of fame</p>\
+            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Hi '+user.value.username+'!</h2><p style="color: #fff">As you have requested for reset password instructions, click the link below</p>\
             <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/passwordrecovery?id='+recover_string+'">\
             http://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>'

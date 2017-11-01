@@ -105,7 +105,9 @@ li a:hover i {
 }
 
 #title p, #list-title p{
-	font-size: 1.03em;
+	font-family: 'superscr';
+	text-transform: uppercase;
+	font-size: .85em;
 	text-align: center;
 }
 
@@ -400,28 +402,29 @@ textarea {
 	color: #fff;
 }
 
-.subscribe-wrapper {
-	/*position: relative;
-	bottom: 70px;*/
+#subscribe-wrapper {
+	height: unset;
+	min-height: unset;
+	padding: 0;
 	margin-bottom: 75px;
 }
 
-.subscribe-wrapper #mc_embed_signup {
+#subscribe-wrapper #mc_embed_signup {
 	background-color: transparent;
 }
 
-.subscribe-wrapper #mc-embedded-subscribe-form {
+#subscribe-wrapper #mc-embedded-subscribe-form {
 	width: 85%;
 	transform: none;
 	top: 0;
 }
 
-.subscribe-wrapper #mc_embed_signup label {
+#subscribe-wrapper #mc_embed_signup label {
 	font-family: 'superscr';
 	font-size: 0.7em;
 }
 
-.subscribe-wrapper #mc_embed_signup input.email {
+#subscribe-wrapper #mc_embed_signup input.email {
 	background-color: #fff;
 	border: 1px solid #282f3e;
 	border-radius: 0;
@@ -430,7 +433,7 @@ textarea {
 	font-family: 'Jura';
 }
 
-.subscribe-wrapper #mc_embed_signup .button {
+#subscribe-wrapper #mc_embed_signup .button {
 	background-color: #282f3e;
 	border: 1px solid #ABB0B2;
 }
@@ -442,6 +445,9 @@ textarea {
 }
 
 @media only screen and (min-width: 1150px) {
+	body {
+		overflow-y: hidden;
+	}
 
 	nav {
 		position: fixed;
@@ -545,34 +551,35 @@ textarea {
 		background-color: #282f3e;
 	}
 
-	.subscribe-wrapper {
+	#subscribe-wrapper {
 		position: absolute;
 		bottom: 15px;
 		right: 15px;
 		text-align: center;
 		margin: 0;
 		width: 17%;
+		height: unset;
 	}
 
-	.subscribe-wrapper #mc-embedded-subscribe-form {
+	#subscribe-wrapper #mc-embedded-subscribe-form {
 		width: 100%;
 	}
 
-	.subscribe-wrapper #mc_embed_signup label {
+	#subscribe-wrapper #mc_embed_signup label {
 		/*font-size: 0.em;*/
 	}
 
-	.subscribe-wrapper #mc_embed_signup input.email {
+	#subscribe-wrapper #mc_embed_signup input.email {
 		/*text-align: left;*/
 		width: 70%;
 		/*margin-bottom: 5px;*/
 	}
 
-	.subscribe-wrapper #mc_embed_signup .button {
+	#subscribe-wrapper #mc_embed_signup .button {
 		padding: 0 10px;
 	}
 
-	.subscribe-wrapper #mc_embed_signup .clear {
+	#subscribe-wrapper #mc_embed_signup .clear {
 		width: 27%
 	}
 }
