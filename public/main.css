@@ -216,6 +216,7 @@ section {
 	font-family: 'superscr';
 	font-size: 0.6em;
 	text-transform: uppercase;
+	cursor: pointer;
 }
 
 #info-container{
@@ -349,6 +350,11 @@ form button {
 	font-size: .65em;
 	cursor: pointer;
 	padding: 17px;
+}
+
+#contact-form {
+	top: 60%;
+	position: absolute;
 }
 
 #cancel-position, #accept-position{

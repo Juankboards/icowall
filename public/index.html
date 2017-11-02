@@ -35,7 +35,7 @@
 			<li><a class="menu" id="list"><i class="fa fa-list"></i></a></li>
 			<li><a class="menu" id="account"><i class="fa fa-user"></i></a></li>
 			<li><a class="menu" id="buy"><i class="fa fa-shopping-cart"></i></a></li>
-			<li><a class="menu" ><i class="fa fa-envelope"></i></a></li>
+			<li><a class="menu" id="contact"><i class="fa fa-envelope"></i></a></li>
 		</ul>
 	</nav>
 	<section id="grid-section">
@@ -67,7 +67,7 @@
 	</section>
 	<section id="profile-section">
 		<div id="profile-container"></div>
-		<button>Sign out</button>
+		<button id="logout">Sign out</button>
 		<table id="profile-table">
 			<tr>
 				<th></th>
@@ -251,6 +251,22 @@
 
 		<!--End mc_embed_signup-->
 	</section>
+	<div id="contact-modal" class="modal">
+		<div class="modal-content">		
+			<span class="close" id="close-contact">X</span>	
+			<div id="contact">
+				<h3><span id="ico-title">CONTACT US</span></h3>			
+				<form action="/api/contactmessage" method="POST" id="contact-form">	
+					<input name="email" type="email" id="contact-email" placeholder="Email" required>
+					<br>
+					<input name="subject" type="text" id="contact-subject" placeholder="Subject" required>
+					<br>			
+					<textarea name="message" rows="5" cols="30" placeholder="Message" id="message" required></textarea>
+					<button id="contact-submit">SEND</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </body>
 <script src="main.js"></script>
 <script>window.twttr = (function(d, s, id) {

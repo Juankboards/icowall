@@ -88,6 +88,7 @@ function init() {
   addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection, subsSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
+  addEvent(document.getElementById("contact"), "click", contactUs.bind(null));
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
   addEvent(inputImg, "change", loadImage);
   addEvent(imgPreview, "load", setImgPrevAttributes);
@@ -528,6 +529,14 @@ document.getElementById("close-password").onclick = function(event) {
   document.getElementById("password-recovery-modal").style.display = "none";
 }
 
+document.getElementById("close-contact").onclick = function(event) {
+  document.getElementById("contact-modal").style.display = "none";
+}
+
+document.getElementById("contact-modal").onclick = function(event) {
+  document.getElementById("contact-modal").style.display = "none";
+} 
+
 document.getElementById("sign-modal").onclick = function(event) {
   document.getElementById("sign-modal").style.display = "none";
   document.getElementById("signup").style.display = "none";
@@ -839,6 +848,11 @@ document.getElementById("register-link").onclick = function(event) {
   document.getElementById("signup").style.display = "block";
 }
 
+document.getElementById("logout").onclick = function(event) {
+  signOut();
+  document.getElementById("home").click();
+}
+
 document.getElementById("login-link").onclick = function(event) {
   document.getElementById("signup").style.display = "none";
   document.getElementById("restore-password-email").style.display = "none";
@@ -853,6 +867,10 @@ document.getElementById("forgot-password").onclick = function(event) {
 
 document.getElementById("password-reset-email").onclick = function(event) {
   passwordResetEmail();
+}
+
+document.getElementById("contact-submit").onclick = function(event) {
+  submitContact();
 }
 
 function passwordResetEmail() {
@@ -890,15 +908,6 @@ function checkSpace(value) {
   return validEmail;
 }
 
-// function evaluateForm(form) {
-
-
-
-//   if () {
-//       input.style.border = "none";
-//       unique = true;
-//     } else {
-//       input.style.border = "1px solid #E34234";
-//       swal("Ooops!", JSON.parse(this.responseText).message, "warning");
-//       unique =  false;
-// }
+function contactUs() {
+  document.getElementById("contact-modal").style.display = "block";
+}

@@ -114,6 +114,19 @@ module.exports = function(app) {
     })  
   });
 
+  apiRoutes.post('/contactmessage', (req, res) => {
+    const mailInfo = {
+      from: 'IcoWall <info@icowall.io>',
+      to: "support@icowall.io",
+      subject: req.body.subject,
+      text: 'email: '+req.body.email+'\nmessage: '+req.body.message,
+    };
+    mailgun.messages().send(mailInfo, function (error, body) {
+      if(error){console.log(error)}
+    });
+    res.redirect("/");
+  });
+
   apiRoutes.get("/blockcost", passport.authenticate('jwt', { session: false }), function (req, res) {
     getCostInBTC().then((cost) => {
       if(!cost){
