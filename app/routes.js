@@ -13,14 +13,14 @@ const express = require('express'),
 
     let db;
 
-    require('dotenv').load();
+    // require('dotenv').load();
 
     MongoClient.connect(process.env.DATABASE, (err, database) => {
       if (err) return console.log(err)
       db = database;
     })
 
-// module.exports = function(app) {  
+module.exports = function(app) {  
 
 
   app.use(passport.initialize());
