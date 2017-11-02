@@ -202,12 +202,13 @@ function showSection(...elements) {
 }
 
 function populateInfo (parentElement, data) {
+  const web = data.web.split("//");
   cleanElement(parentElement);
   populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": data.filename}]});
   populateElement(parentElement, {"type": "H1", "hasText": true, "text": data.name, "attributes": []});
   populateElement(parentElement, {"type": "P", "hasText": true, "text": data.description, "attributes": []});
   populateElement(parentElement, {"type": "A", "hasText": true, "text": data.web, 
-                                  "attributes": [{"type": "href", "value": data.web}, {"type": "target", "value": "_blank"}]});
+                                  "attributes": [{"type": "href", "value": "http://"+web[web.length-1]}, {"type": "target", "value": "_blank"}]});
 }
 
 function cleanElement (element) { 
