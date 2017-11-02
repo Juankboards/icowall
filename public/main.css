@@ -98,6 +98,21 @@ td {
 	font-size: .54em;
 }
 
+#hover-title {
+	display: none;
+	position: absolute;
+	background-color: #282f3e;
+	color: #fff;
+	padding: 5px;
+	z-index: 10;
+}
+
+#hover-title p {
+	margin: 0;
+	font-size: .7em;
+	font-family: 'superscr';
+}
+
 #title {
 	position: absolute;
 	top: 35px;
@@ -181,6 +196,7 @@ section {
 
 #icons-container, #buy-grid {
 	position: absolute;
+	cursor: pointer;
 }
 
 #icons-container img {
@@ -528,6 +544,7 @@ textarea {
 	#grid-container {
 		height: 100%;
 		overflow: hidden;
+		padding: 5px 0;
 	}
 
 	#grid {

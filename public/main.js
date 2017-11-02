@@ -125,7 +125,7 @@ function setIcons (parentElement, elements) {
   elements.forEach((element) => {
     elementAttributes = {"type": "IMG", 
       "hasText": false, "text": "", 
-      "attributes": [{"type": "src", "value": element.filename}, 
+      "attributes": [{"type": "src", "value": element.filename},
                     {"type": "width", "value": element.columnSize*blockProperties.size},
                     {"type": "height", "value": element.rowSize*blockProperties.size}
                     ]
@@ -134,6 +134,8 @@ function setIcons (parentElement, elements) {
     arrangeElement(newIcon, {"top": Math.round(element.rows[0]*blockProperties.size), "left": Math.round(element.columns[0]*blockProperties.size)});
     makeElementBlocksUnavailable(element); //later not her but when buy blocks
     addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element), infoSection);
+    addEvent(newIcon, "mousemove", setTitlePosition.bind(null));
+    addEvent(newIcon, "mouseover", showTitle.bind(null, element));
   });
 } 
 
@@ -201,7 +203,9 @@ function showSection(...elements) {
   }
 }
 
-function populateInfo (parentElement, data) {
+function populateInfo (parentElement, data, event) {
+  event.stopPropagation();
+  document.getElementById("hover-title").style.display = "none";
   const web = data.web.split("//");
   cleanElement(parentElement);
   populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": data.filename}]});
@@ -912,3 +916,36 @@ function checkSpace(value) {
 function contactUs() {
   document.getElementById("contact-modal").style.display = "block";
 }
+
+function setTitlePosition(event) {
+  document.getElementById("hover-title").style.left = event.pageX + 5 + "px";
+  document.getElementById("hover-title").style.top = event.pageY + 5 + "px";
+}
+
+function showTitle(element, event) {
+  event.stopPropagation();
+  document.getElementById("hover-title").innerHTML = "<p>" + element.name + "</p>";
+  document.getElementById("hover-title").style.display = "block";
+}
+
+document.getElementById("grid-container").onmouseover = function() {
+  document.getElementById("hover-title").innerHTML = "";
+  document.getElementById("hover-title").style.display = "none";
+}
+
+document.getElementById("icons-container").onmouseover = function() {
+  document.getElementById("hover-title").innerHTML = "<p>Rent block</p>";
+  document.getElementById("hover-title").style.display = "block";
+}
+
+document.getElementById("icons-container").onmousemove = function(event) {
+  document.getElementById("hover-title").style.left = event.pageX + 5 + "px";
+  document.getElementById("hover-title").style.top = event.pageY + 5 + "px";
+}
+
+document.getElementById("icons-container").onclick = function(event) {
+  document.getElementById("hover-title").style.display = "none";
+  document.getElementById("buy").click();
+}
+
+// window.onmouseout = function 
