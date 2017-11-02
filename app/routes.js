@@ -13,14 +13,14 @@ const express = require('express'),
 
     let db;
 
-    // require('dotenv').load();
+    require('dotenv').load();
 
     MongoClient.connect(process.env.DATABASE, (err, database) => {
       if (err) return console.log(err)
       db = database;
     })
 
-module.exports = function(app) {  
+// module.exports = function(app) {  
 
 
   app.use(passport.initialize());
@@ -83,6 +83,18 @@ module.exports = function(app) {
         res.status(200).json({"icons": result});
       } else{
         res.status(400).json({"message": "Unable to get Icons"});
+      }  
+    })  
+  });
+
+  apiRoutes.get('/userblocks', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const id = req.user._id;
+    db.collection("icons").find({"userId": id}).toArray(function (err, result) {
+      if (err) throw err
+      if (result.length > 0){
+        res.status(200).json({"blocks": result});
+      } else{
+        res.status(400).json({"message": id});
       }  
     })  
   });

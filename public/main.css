@@ -90,7 +90,13 @@ li a:hover i {
 	cursor: pointer;
 }
 
+th {
+	font-size: 0.78em;
+}
 
+td {
+	font-size: .54em;
+}
 
 #title {
 	position: absolute;
@@ -182,13 +188,34 @@ section {
 	cursor: pointer;
 }
 
-#info-section, #list-section {
+#info-section, #list-section, #profile-section {
 	display: none;
 	width: 100%;
 	position: absolute;
 	top: 0;
 	background-color: #323a4d;
-	padding: 35px 0 75px 0;
+	padding: 35px 10px 75px 0;
+}
+
+#profile-section{ 
+	top: 115px;
+}
+#profile-container h1, #profile-container h3 {
+	text-align: left;
+	margin: 0;
+	padding-left: 10px;
+}
+
+#profile-section button {
+	float: left;
+	margin: 10px;
+	border: none;
+	width: 95px;
+	height: 35px;
+	background-color: #282f3e;
+	font-family: 'superscr';
+	font-size: 0.6em;
+	text-transform: uppercase;
 }
 
 #info-container{
@@ -502,11 +529,27 @@ textarea {
 		width: auto;
 	}
 
-	#info-section, #list-section {
+	#info-section, #list-section, #profile-section {
 		width: -webkit-calc(100% - 70px);
 		width: -moz-calc(100% - 70px);
 		width: calc(100% - 70px);
 		float: right;
+	}
+
+	#profile-section {
+		position: unset;
+		padding: 0;
+	}
+
+	#profile-section button {
+		margin: 0 0 10px 30px;
+		width: 135px;
+		height: 50px;
+		font-size: 0.8em;
+	}
+
+	#profile-container {
+		padding: 20px;
 	}
 
 	th, td {

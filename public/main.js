@@ -84,7 +84,7 @@ function init() {
   populateHome();
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
-  addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"]), listSection);
+  addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
   addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection, subsSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
@@ -220,7 +220,7 @@ function fillDate(value) {
   return date;
 }
 
-function populateTable (parentElement, data) {
+function populateTable (parentElement, data, profile) {
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element) => {
       let date = new Date(element.date);
@@ -230,11 +230,16 @@ function populateTable (parentElement, data) {
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": []});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.description, "attributes": []});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": []});
-
-      imgColumn.onclick = () => {
-        populateInfo(infoContainer, element);
-        listSection.style.display = "none";
-        infoSection.style.display = "block";
+      if(profile) {
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.totalBlocks, "attributes": []});
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.cost, "attributes": []});
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Waiting", "attributes": []});
+      } else{
+        imgColumn.onclick = () => {
+          populateInfo(infoContainer, element);
+          listSection.style.display = "none";
+          infoSection.style.display = "block";
+        }
       }
     });
   }
@@ -744,17 +749,11 @@ function resendVerificationEmail(username) {
 function isLogged() {
   const session = checkSession();
   if(session.logged){
-    swal({
-      title: "Yeahh!",
-      text: "You are already logged as " + session.user["username"],
-      icon: "success",
-      buttons: ["Sign out", "Keep session"],
-    })
-    .then((session) => {
-      if (!session) {
-        signOut();
-      }
-    });
+    const blocks = getUserBlock();  
+    document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
+                                                        <h3>"+session.user.email+"</h3>";
+    populateTable(document.getElementById("profile-table"), blocks, true);                                                   
+    showSection(document.getElementById("profile-section"));
     return;
   } 
   document.getElementById("sign-modal").style.display="block";
@@ -773,6 +772,20 @@ function checkSession() {
   httpRequest.setRequestHeader("Content-type", "application/json");
   httpRequest.send();
   return status;
+}
+
+function getUserBlock() {
+  let blocks = {};
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('GET', '/api/userblocks', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      blocks = JSON.parse(this.responseText).blocks;
+    } 
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send();
+  return blocks;
 }
 
 function signOut() {
