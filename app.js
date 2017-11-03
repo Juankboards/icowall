@@ -20,15 +20,12 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use((req, res, next) => {
-  if (req.protocol !== 'https')
-    res.redirect('https://www.icowall.io')
-  else
-    next()
-})
-
 require('./app/routes')(app);    
 
 app.get('/*', function(req, res){
-    res.sendFile(__dirname + '/public/index.html');
+    if (req.protocol !== 'https')
+      res.redirect('https://www.icowall.io')
+    else
+      res.sendFile(__dirname + '/public/index.html');
+    }
   });
