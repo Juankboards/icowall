@@ -321,7 +321,8 @@ function tempImgPreviewTopPosition (event, blocksX, blocksY, blockSize) {
 }
 
 function setImgPreviewPosition (imgGridBlocks){
-  if(imgPreview.src != "" && !imgPreview.className){  
+  if(imgPreview.src != "" && !imgPreview.className){ 
+    const period = document.getElementById("rent-weeks").value>1? " Weeks":" Week"; 
     const imgPrevBlocks = getImgPrevBlocks(imgGridBlocks);
     const cost = blockCost();
     if(validPosition(...imgPrevBlocks)){
@@ -329,8 +330,8 @@ function setImgPreviewPosition (imgGridBlocks){
       document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
       + "<br>Block cost per month: " + cost + " BTC"
-      + "<br>Rent period: " + document.getElementById("rent-months").value + " Months" 
-      + "<br>Total cost: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-months").value)*cost).toFixed(8) + " BTC";
+      + "<br>Rent period: " + document.getElementById("rent-weeks").value + period 
+      + "<br>Total cost: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost).toFixed(8) + " BTC";
       // freezeImgPreview();
     }
   }
@@ -504,7 +505,7 @@ function iconRegistration(imgGridBlocks) {
     "rowSize": document.getElementById("blocks-rows").value,
     "columns": [imgBlocks[0], imgBlocks[1]],
     "rows": [imgBlocks[2], imgBlocks[3]],
-    "period": document.getElementById("rent-months").value,
+    "period": document.getElementById("rent-weeks").value,
     "image": imgPreview.src
   }
 
