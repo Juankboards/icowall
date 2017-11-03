@@ -178,6 +178,20 @@ td {
 	font-family: superscr;
 }
 
+#ratio, #no-ratio {
+	position: fixed;
+	bottom: 125px;
+	transform: translateX(-50%);
+}
+
+#ratio i, #no-ratio i {
+	cursor: pointer;
+}
+
+.hide-scale-option {
+	display: none;
+}
+
 section {
 	width: 100%;
 	/*min-height: 100%;*/
@@ -539,6 +553,12 @@ textarea {
 		width: calc(100% - 285px);
 		margin: 0 0 0 70px;
 		padding: 0;
+	}
+
+	#ratio, #no-ratio {
+		position: relative;
+		top: 8px;
+		right: 91%;
 	}
 
 	#grid-container {

@@ -1,5 +1,6 @@
 // // Static data. Will be from db
-let path = window.location.pathname.slice(1)
+let path = window.location.pathname.slice(1);
+let ratio = 1;
 
 if(path == "emailverification") {
   const queue = window.location.href.split("?")[1];
@@ -263,6 +264,8 @@ function browseImage() {
     document.getElementById("account").click();
     return;
   }
+  document.getElementById("ratio").className = "";
+  document.getElementById("no-ratio").className = "hide-scale-option";
   cleanImgPreview();
   cleanElement(iconsContainer);
   setIcons(iconsContainer, allIcons["icons"]);  
@@ -393,6 +396,7 @@ function setImgPrevAttributes() {
    setSizeToolsValues(colBlocks, rowsBlocks);
    width = Math.round(colBlocks*10*sizeProportion),
    height = Math.round(rowsBlocks*10*sizeProportion);
+  ratio = colBlocks/rowsBlocks;
 
   imgPreview.width = width <= 1000*sizeProportion? width : Math.round(1000*sizeProportion);
   imgPreview.height = height <= 1000*sizeProportion? height : Math.round(1000*sizeProportion);
@@ -402,10 +406,18 @@ function updateImgPrevAttributes(colBlocks, rowsBlocks) {
   const sizeProportion = getSizeProportion();
   if(colBlocks){
     imgPreview.width = Math.round(colBlocks*10*sizeProportion);
+    if(document.getElementById("no-ratio").className){
+      imgPreview.height = Math.round(Math.round(colBlocks/ratio)*10*sizeProportion);
+      document.getElementById("blocks-rows").value = Math.round(colBlocks/ratio);
+    }
   }
 
   if(rowsBlocks){
     imgPreview.height = Math.round(rowsBlocks*10*sizeProportion);
+    if(document.getElementById("no-ratio").className){
+      imgPreview.width = Math.round(Math.round(rowsBlocks*ratio)*10*sizeProportion);
+      document.getElementById("blocks-columns").value = Math.round(rowsBlocks*ratio);
+    }
   }
 }
 
@@ -766,6 +778,15 @@ function isLogged() {
     const blocks = getUserBlock();  
     document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
                                                         <h3>"+session.user.email+"</h3>";
+    document.getElementById("profile-table").innerHTML = "<tr>\
+                                                        <th></th>\
+                                                        <th>Name</th>\
+                                                        <th>Description</th>\
+                                                        <th>Date</th>\
+                                                        <th>Blocks</th>\
+                                                        <th>Cost</th>\
+                                                        <th>Status</th>\
+                                                      </tr>";
     populateTable(document.getElementById("profile-table"), blocks, true);                                                   
     showSection(document.getElementById("profile-section"));
     return;
@@ -948,4 +969,13 @@ document.getElementById("icons-container").onclick = function(event) {
   document.getElementById("buy").click();
 }
 
-// window.onmouseout = function 
+document.getElementById("ratio").onclick = function(event) {
+  document.getElementById("ratio").className = "hide-scale-option";
+  document.getElementById("no-ratio").className = "";
+}
+
+document.getElementById("no-ratio").onclick = function(event) {
+  ratio = document.getElementById("blocks-columns").value/document.getElementById("blocks-rows").value;
+  document.getElementById("no-ratio").className = "hide-scale-option";
+  document.getElementById("ratio").className = "";
+}

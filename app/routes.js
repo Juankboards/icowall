@@ -245,7 +245,7 @@ module.exports = function(app) {
       
       bcrypt.compare(password, user.password, function(err, match) {
         if(match) {
-          var payload = {id: user._id};
+          var payload = {username: user.username};
           var token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: 10080 });
           res.cookie('jwt', token, { maxAge: 260000000, httpOnly: true });
           res.json({token: 'JWT ' + token});
