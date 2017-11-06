@@ -47,13 +47,13 @@ module.exports = function(app) {
             from: 'IcoWall <info@icowall.io>',
             to: userInfo.email,
             subject: 'IcoWall Email verification',
-            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttp://www.icowall.io/emailverification?id='+userInfo.unconfirmed,
+            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+userInfo.unconfirmed,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://www.icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
+            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
-            http://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>'
+            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
+            https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>'
           };
 
           mailgun.messages().send(mailInfo, function (error, body) {
@@ -209,8 +209,8 @@ module.exports = function(app) {
                   subject: 'IcoWall Blocks reservation',
                   text: 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
                   html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-                        <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://www.icowall.io">\
-                        <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+                        <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
+                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
                         </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
                         <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
                         </div></div></html>'
@@ -269,13 +269,13 @@ module.exports = function(app) {
             from: 'IcoWall <info@icowall.io>',
             to: user.email,
             subject: 'IcoWall Email verification',
-            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttp://www.icowall.io/emailverification?id='+user.unconfirmed,
+            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+user.unconfirmed,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
+            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
-            http://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>'
+            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
+            https://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>'
           };
           mailgun.messages().send(mailInfo, function (error, body) {
             if(error){
@@ -366,13 +366,13 @@ module.exports = function(app) {
             from: 'IcoWall <info@icowall.io>',
             to: user.value.email,
             subject: 'IcoWall Password reset',
-            text: 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttp://www.icowall.io/passwordrecovery?id='+recover_string,
+            text: 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttps://www.icowall.io/passwordrecovery?id='+recover_string,
             html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="http://icowall.io">\
-            <img style="width: 200px" src="http://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
+            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
             </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Hi '+user.value.username+'!</h2><p style="color: #fff">As you have requested for reset password instructions, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="http://www.icowall.io/passwordrecovery?id='+recover_string+'">\
-            http://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>'
+            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/passwordrecovery?id='+recover_string+'">\
+            https://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>'
           };
           mailgun.messages().send(mailInfo, function (error, body) {
             if(error){
