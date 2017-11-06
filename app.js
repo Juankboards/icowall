@@ -23,10 +23,5 @@ app.use(function(req, res, next) {
 require('./app/routes')(app);    
 
 app.get('/*', function(req, res){
-  console.log(req.protocol);
-  if(req.protocol !== 'https') {
-    res.redirect('https://www.icowall.io')
-  }else{
-    res.sendFile(__dirname + '/public/index.html');
-  }
+  res.sendFile(__dirname + '/public/index.html');
 });
