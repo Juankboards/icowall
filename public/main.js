@@ -88,7 +88,7 @@ function init() {
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
   addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection, subsSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
-  addEvent(document.getElementById("buy"), "click", browseImage, gridSection, uploadSection);
+  addEvent(document.getElementById("buy"), "click", browseImage);
   addEvent(document.getElementById("contact"), "click", contactUs.bind(null));
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
   addEvent(inputImg, "change", loadImage);
@@ -266,9 +266,7 @@ function browseImage() {
   }
   document.getElementById("ratio").className = "";
   document.getElementById("no-ratio").className = "hide-scale-option";
-  cleanImgPreview();
-  cleanElement(iconsContainer);
-  setIcons(iconsContainer, allIcons["icons"]);  
+  cleanImgPreview(); 
   inputImg.click(); //select image
 }
 
@@ -425,6 +423,9 @@ function updateImgPrevAttributes(colBlocks, rowsBlocks) {
 function loadImage() {
   const img = inputImg.files[0];
   if(img) {
+    cleanElement(iconsContainer);
+    showSection(gridSection, uploadSection)
+    setIcons(iconsContainer, allIcons["icons"]); 
     display.readAsDataURL(img);
     document.getElementById("feed").style.display = "none";
     document.getElementById("tools").style.display = "block";
