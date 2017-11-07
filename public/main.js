@@ -76,6 +76,7 @@ const infoSection = document.getElementById("info-section"),
     imgPreviewContainer = document.getElementById("buy-grid"),
     gridContainer = document.getElementById("grid-container"),
     imgPreview = document.getElementById("icon-preview"),
+    gridAttr = gridAttributes(),
     inputImg = document.getElementById("icon");
     display  = new FileReader(); 
 
@@ -84,7 +85,8 @@ function init() {
   window.scrollTo(0, 0); //Always start at top of the page
   getApprovedIcons();
   getAllIcons();
-  arrangeElement(iconsContainer, gridAttributes()).then(populateHome());
+  arrangeElement(iconsContainer, gridAttr);
+  populateHome();
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
@@ -108,6 +110,7 @@ window.onload = (function () {
 //helpers
 function gridAttributes () {
   const grid = document.getElementById("grid").getBoundingClientRect();
+  console.log(grid)
   return ({
         "width": grid.width,
         "height": grid.height,
@@ -117,11 +120,8 @@ function gridAttributes () {
 }
 
 function arrangeElement (element, attributes) {
-  return new Promise((resolve,reject) => {
-    Object.keys(attributes).forEach((attr) => {
-      element.style[attr] = attributes[attr] + "px";
-    })
-    resolve(true);
+  Object.keys(attributes).forEach((attr) => {
+    element.style[attr] = attributes[attr] + "px";
   })
 }   
 
