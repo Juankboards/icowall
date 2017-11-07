@@ -126,7 +126,7 @@ function gridAttributes () {
         "width": width,
         "height": height,
         "top": grid.top,
-        "left": grid.left
+        "left": left
       });
 }
 
