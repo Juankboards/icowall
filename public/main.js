@@ -111,6 +111,13 @@ window.onload = (function () {
 function gridAttributes () {
   const grid = document.getElementById("grid").getBoundingClientRect();
   console.log(grid)
+  width = grid.width;
+  height = grid.height;
+  if(window.innerWidth < 1150) {
+    width = grid.height;
+  } else {
+    height = grid.width;
+  }
   return ({
         "width": grid.width,
         "height": grid.height,
