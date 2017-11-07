@@ -1,6 +1,6 @@
-if(location.protocol==="http:"){
-  window.location.replace("https://www.icowall.io");
-}
+// if(location.protocol==="http:"){
+//   window.location.replace("https://www.icowall.io");
+// }
 
 let path = window.location.pathname.slice(1);
 let ratio = 1;
@@ -84,8 +84,7 @@ function init() {
   window.scrollTo(0, 0); //Always start at top of the page
   getApprovedIcons();
   getAllIcons();
-  arrangeElement(iconsContainer, gridAttributes());
-  populateHome();
+  arrangeElement(iconsContainer, gridAttributes()).then(populateHome());
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
@@ -118,8 +117,11 @@ function gridAttributes () {
 }
 
 function arrangeElement (element, attributes) {
-  Object.keys(attributes).forEach((attr) => {
-    element.style[attr] = attributes[attr] + "px";
+  return new Promise((resolve,reject) => {
+    Object.keys(attributes).forEach((attr) => {
+      element.style[attr] = attributes[attr] + "px";
+    })
+    resolve(true);
   })
 }   
 
