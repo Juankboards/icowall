@@ -112,7 +112,7 @@ function gridAttributes () {
   const grid = document.getElementById("grid").getBoundingClientRect();
   console.log(grid)
   let width = grid.width,
-      height = grid.height;,
+      height = grid.height,
       left = grid.left;
   if(window.innerWidth > 1150) {
     width = grid.height;
