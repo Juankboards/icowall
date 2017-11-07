@@ -203,7 +203,7 @@ section {
 	position: relative;
 }
 
-#grid {
+#grid, #icons-container {
 	width: 100%;
 	height: auto;
 }
@@ -227,7 +227,10 @@ section {
 	padding: 35px 10px 75px 0;
 }
 
-
+#info-container .accounts {
+	font-size: 1.7em;
+	margin: 0 5px;
+}
 
 #profile-section{ 
 	top: 115px;
@@ -267,11 +270,11 @@ section {
 
 #info-container a {
 	font-weight: 900;
+	margin: 10px 0 50px 0;
 }
 
 #info-container h1{
-	margin: 10px 0 50px 0;
-
+	margin: 10px 0 0 0;
 }
 
 table {
@@ -367,7 +370,11 @@ table {
 	height: 445px;
 }
 
-#login, #signup, #position-confirmation, #icon-registration, #password-recovery, #restore-password-email {
+#buy-modal .modal-accounts {
+	height: 565px;
+}
+
+#login, #signup, #position-confirmation, #icon-registration, #password-recovery, #restore-password-email, #icon-accounts {
 	display: block;
 	height: 100%;
 }
@@ -472,7 +479,7 @@ textarea {
 	border: none;
 }
 
-#signup, #icon-registration, #restore-password-email {
+#signup, #icon-registration, #restore-password-email, #icon-accounts {
 	display: none;
 }
 

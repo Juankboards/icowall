@@ -229,9 +229,17 @@ function populateInfo (parentElement, data, event) {
   cleanElement(parentElement);
   populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": data.filename}]});
   populateElement(parentElement, {"type": "H1", "hasText": true, "text": data.name, "attributes": []});
-  populateElement(parentElement, {"type": "P", "hasText": true, "text": data.description, "attributes": []});
   populateElement(parentElement, {"type": "A", "hasText": true, "text": data.web, 
                                   "attributes": [{"type": "href", "value": "http://"+web[web.length-1]}, {"type": "target", "value": "_blank"}]});
+  populateElement(parentElement, {"type": "P", "hasText": true, "text": data.description, "attributes": []}); 
+  let social = populateElement(parentElement, {"type": "DIV", "hasText": false, "text": "", "attributes": [{"type": "class", "value": "social-accounts"}]}); 
+  for (const account in data.social){
+    const link = data.social[account].split("//");
+    if(data.social[account]){
+      populateElement(social, {"type": "A", "hasText": false, "text": "", "attributes": [
+                                {"type": "href", "value": "http://"+link[link.length-1]}, {"type": "class", "value": "fa fa-" + account + " accounts"}]}); 
+    }
+  }
 }
 
 function cleanElement (element) { 
@@ -366,6 +374,56 @@ document.getElementById("accept-position").onclick = function(){
   document.getElementById("icon-registration").style.display = "block";
 }
 
+document.getElementById("ico-registration-next").onclick = function(){
+  const formInfo = document.getElementById("ico-registration-form");
+  let error = [];
+  let submit = true;
+  
+  if(!checkFill(formInfo[0].value)){
+    submit = false;
+    error.push("Enter an ICO name")
+    formInfo[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(formInfo[1].value)){
+    submit = false;
+    error.push("Enter an ICO description")
+    formInfo[1].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(formInfo[2].value)){
+    submit = false;
+    error.push("Enter an ICO website")
+    formInfo[2].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[3].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start month")
+    formInfo[3].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[4].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start day")
+    formInfo[4].style.border = "1px solid #E34234";
+  }
+
+  if(formInfo[5].value=='0'){
+    submit = false;
+    error.push("Enter an ICO start year")
+    formInfo[5].style.border = "1px solid #E34234";
+  }
+
+  if(!submit){
+    swal("Watch out!", error.join(", "), "warning");
+    return false;
+  }
+  document.getElementById("icon-registration").style.display = "none";
+  document.getElementById("modal-content").className = "modal-content modal-accounts";
+  document.getElementById("icon-accounts").style.display = "block";
+}
+
 function getImgPrevBlocks(imgGridBlocks) {
   const firstXblock = imgGridBlocks.X.indexOf(parseInt(imgPreview.style.left.split("px")[0])),
    lastXblock = firstXblock + Math.round(imgPreview.width/imgGridBlocks.size) - 1,
@@ -472,52 +530,7 @@ document.getElementById("blocks-rows").onchange = function (event) {
 
 function iconRegistration(imgGridBlocks) {
   const formInfo = document.getElementById("ico-registration-form");
-  let error = [];
-  let submit = true;
-  
-  if(!checkFill(formInfo[0].value)){
-    submit = false;
-    error.push("Enter an ICO name")
-    formInfo[0].style.border = "1px solid #E34234";
-  }
-
-  if(!checkFill(formInfo[1].value)){
-    submit = false;
-    error.push("Enter an ICO description")
-    formInfo[1].style.border = "1px solid #E34234";
-  }
-
-  if(!checkFill(formInfo[2].value)){
-    submit = false;
-    error.push("Enter an ICO website")
-    formInfo[2].style.border = "1px solid #E34234";
-  }
-
-  if(formInfo[3].value=='0'){
-    submit = false;
-    error.push("Enter an ICO start month")
-    formInfo[3].style.border = "1px solid #E34234";
-  }
-
-  if(formInfo[4].value=='0'){
-    submit = false;
-    error.push("Enter an ICO start day")
-    formInfo[4].style.border = "1px solid #E34234";
-  }
-
-  if(formInfo[5].value=='0'){
-    submit = false;
-    error.push("Enter an ICO start year")
-    formInfo[5].style.border = "1px solid #E34234";
-  }
-
-  console.log(formInfo[3].value,formInfo[4].value,formInfo[5].value)
-
-  if(!submit){
-    swal("Watch out!", error.join(", "), "warning");
-    return false;
-  }
-
+  const formAccounts = document.getElementById("form-accounts");
   const imgBlocks = getImgPrevBlocks(imgGridBlocks);
   const imgInfo = {
     "name": formInfo[0].value,
@@ -529,14 +542,21 @@ function iconRegistration(imgGridBlocks) {
     "columns": [imgBlocks[0], imgBlocks[1]],
     "rows": [imgBlocks[2], imgBlocks[3]],
     "period": document.getElementById("rent-weeks").value,
-    "image": imgPreview.src
+    "image": imgPreview.src,
+    "facebook": formAccounts[0].value,
+    "twitter": formAccounts[1].value,
+    "github": formAccounts[2].value,
+    "telegram": formAccounts[3].value,
+    "bitcoin": formAccounts[4].value,
+    "reddit": formAccounts[5].value,
+    "slack": formAccounts[6].value
   }
 
   let httpRequest = new XMLHttpRequest();            
   httpRequest.open('POST', '/api/upload', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("close-buy").click();
+      document.getElementById("close-accounts").click();
       swal("Well done!", JSON.parse(this.responseText).message, "success");
     } else {
       swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
@@ -588,6 +608,15 @@ document.getElementById("close-buy").onclick = function(event) {
   document.getElementById("buy-modal").style.display = "none";
   showSection(gridSection);
   document.getElementById("icon-registration").style.display = "none";
+  document.getElementById("position-confirmation").style.display = "block";
+  document.getElementById("home").click();
+}
+
+document.getElementById("close-accounts").onclick = function(event) {
+  document.getElementById("buy-modal").style.display = "none";
+  showSection(gridSection);
+  document.getElementById("modal-content").className = "modal-content";
+  document.getElementById("icon-accounts").style.display = "none";
   document.getElementById("position-confirmation").style.display = "block";
   document.getElementById("home").click();
 }

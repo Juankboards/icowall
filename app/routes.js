@@ -167,7 +167,16 @@ module.exports = function(app) {
         "period": req.body.period,
         "cost": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCost,
         "approved": false,
-        "userId": req.user._id
+        "userId": req.user._id,
+        "social": {
+          "facebook": req.body.facebook,
+          "twitter": req.body.twitter,
+          "github": req.body.github,
+          "telegram": req.body.telegram,
+          "bitcoin": req.body.bitcoin,
+          "reddit": req.body.reddit,
+          "slack": req.body.slack
+        }
       };
 
       
