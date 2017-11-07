@@ -227,6 +227,8 @@ section {
 	padding: 35px 10px 75px 0;
 }
 
+
+
 #profile-section{ 
 	top: 115px;
 }
@@ -254,6 +256,19 @@ section {
 	position: relative;
 }
 
+#info-container img {
+	width: 40%;
+	max-width: 350px;
+}
+
+#info-container p {
+	padding: 0 10px;
+}
+
+#info-container a {
+	font-weight: 900;
+}
+
 #info-container h1{
 	margin: 10px 0 50px 0;
 
@@ -264,13 +279,28 @@ table {
 	margin: 50px 0;
 }
 
+.name-col{
+	width: 10%;
+}
+
+.date-col {
+	width: 15%;
+}
+
+.img-column {
+	width: 20%;
+}
+
+.description-col {
+	width: 55%;
+}
+
 .img-column {
 	padding: 10px;
 }
 
 .img-column img{
 	width: 100%;
-	max-width: 100px;
 	height: auto;
 	cursor: pointer;
 }
@@ -577,6 +607,10 @@ textarea {
 		width: -moz-calc(100% - 70px);
 		width: calc(100% - 70px);
 		float: right;
+	}
+
+	#list-section {
+		overflow-y: scroll;
 	}
 
 	#profile-section {

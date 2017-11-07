@@ -233,23 +233,26 @@ function fillDate(value) {
 function populateTable (parentElement, data, profile) {
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element) => {
+      let description = element.description.length>144?element.description.slice(0,145)+"..." : element.description;
       let date = new Date(element.date);
       let newRow = populateElement(parentElement, {"type": "TR", "hasText": false, "text": "", "attributes": []});
       let imgColumn = populateElement(newRow, {"type": "TD", "hasText": false, "text": "", "attributes": [{"type": "class", "value": "img-column"}]});
       populateElement(imgColumn, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": element.filename}]});
-      populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": []});
-      populateElement(newRow, {"type": "TD", "hasText": true, "text": element.description, "attributes": []});
-      populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": []});
+      populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": [{"type": "class", "value": 'name-col'}]});
+      if(!profile) {
+       populateElement(newRow, {"type": "TD", "hasText": true, "text": description, "attributes": [{"type": "class", "value": 'description-col'}]});
+      }
+      populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": [{"type": "class", "value": 'date-col'}]});
       if(profile) {
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.totalBlocks, "attributes": []});
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.cost, "attributes": []});
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Waiting", "attributes": []});
-      } else{
-        imgColumn.onclick = () => {
-          populateInfo(infoContainer, element);
+      }
+      imgColumn.onclick = (event) => {
+          populateInfo(infoContainer, element, event);
           listSection.style.display = "none";
           infoSection.style.display = "block";
-        }
+      
       }
     });
   }
@@ -787,7 +790,6 @@ function isLogged() {
     document.getElementById("profile-table").innerHTML = "<tr>\
                                                         <th></th>\
                                                         <th>Name</th>\
-                                                        <th>Description</th>\
                                                         <th>Date</th>\
                                                         <th>Blocks</th>\
                                                         <th>Cost</th>\
