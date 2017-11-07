@@ -1,6 +1,6 @@
-// if(location.protocol==="http:"){
-//   window.location.replace("https://www.icowall.io");
-// }
+if(location.protocol==="http:"){
+  window.location.replace("https://www.icowall.io");
+}
 
 let path = window.location.pathname.slice(1);
 let ratio = 1;
