@@ -113,11 +113,13 @@ function gridAttributes () {
   console.log(grid)
   let width = grid.width,
       height = grid.height,
+      top = grid.top,
       left = grid.left;
   if(window.innerWidth > 1150) {
     width = grid.height;
   } else {
     height = grid.width;
+    top = 150;
   }
   if(grid.width == 0){
     left = grid.left - width/2;
@@ -125,7 +127,7 @@ function gridAttributes () {
   return ({
         "width": width,
         "height": height,
-        "top": grid.top,
+        "top": top,
         "left": left
       });
 }
