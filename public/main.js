@@ -119,8 +119,8 @@ function gridAttributes () {
     height = grid.width;
   }
   return ({
-        "width": grid.width,
-        "height": grid.height,
+        "width": width,
+        "height": height,
         "top": grid.top,
         "left": grid.left
       });
