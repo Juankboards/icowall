@@ -7,10 +7,12 @@ const express = require('express'),
     passport = require("passport"),
     aws = require('aws-sdk'),
     crypto = require('crypto'),
-    mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN}),
+    // mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN}),
+    mandrill = require('mandrill-api/mandrill'),
+    mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_API_KEY),
     MongoClient = require('mongodb').MongoClient,
     getJSON = require('get-json');
-
+    console.log()
     let db;
 
     // require('dotenv').load();
@@ -44,20 +46,31 @@ module.exports = function(app) {
           res.status(500).json({message: err});
         } else {
           const mailInfo = {
-            from: 'IcoWall <info@icowall.io>',
-            to: userInfo.email,
-            subject: 'IcoWall Email verification',
-            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+userInfo.unconfirmed,
-            html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
-            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
-            </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
-            https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>'
+              "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+                      <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
+                      <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+                      </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
+                      <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
+                      https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>',
+              "text": 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+userInfo.unconfirmed,
+              "subject": 'Email verification',
+              "from_email": 'info@icowall.io',
+              "from_name": "IcoWall",
+              "to": [{
+                      "email": userInfo.email,
+                      "name": userInfo.username,
+                      "type": "to"
+                  }],
+              "important": false,
+              "track_clicks": true
           };
-
-          mailgun.messages().send(mailInfo, function (error, body) {
-            if(error){console.log(error)}
+          var async = false;
+          mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+              console.log(result);
+          }, function(e) {
+              // Mandrill returns the error as an object with name and message keys
+              console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+              // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
           });
           res.status(200).json({message: "Account created. You will recieve an email to confirm your account"});
         }
@@ -213,19 +226,31 @@ module.exports = function(app) {
                 res.status(500).json({message: err});
               } else {
                 const mailInfo = {
-                  from: 'IcoWall <info@icowall.io>',
-                  to: req.user.email,
-                  subject: 'IcoWall Blocks reservation',
-                  text: 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
-                  html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-                        <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
-                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
-                        </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
-                        <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
-                        </div></div></html>'
+                    "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+                                        <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
+                                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+                                        </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
+                                        <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
+                                        </div></div></html>',
+                    "text": 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
+                    "subject": 'Blocks reservation',
+                    "from_email": 'info@icowall.io',
+                    "from_name": "IcoWall",
+                    "to": [{
+                            "email": req.user.email,
+                            "name": req.user.username,
+                            "type": "to"
+                        }],
+                    "important": false,
+                    "track_clicks": true
                 };
-                mailgun.messages().send(mailInfo, function (error, body) {
-                  if(error){console.log(error)}
+                var async = false;
+                mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+                    console.log(result);
+                }, function(e) {
+                    // Mandrill returns the error as an object with name and message keys
+                    console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+                    // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
                 });
                 res.status(200).json({message: "Icon stored. You will recieve an email to confirm your purchase"});
               }
@@ -275,24 +300,33 @@ module.exports = function(app) {
       console.log(user)
       if(user){
         const mailInfo = {
-            from: 'IcoWall <info@icowall.io>',
-            to: user.email,
-            subject: 'IcoWall Email verification',
-            text: 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+user.unconfirmed,
-            html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
-            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
-            </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
-            https://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>'
-          };
-          mailgun.messages().send(mailInfo, function (error, body) {
-            if(error){
-              res.status(408).json({message:"Error sending the email"}); 
-              return;
-            }
-          });
-          res.status(200).json({message:"Email confirmed"});
+            "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+                    <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
+                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+                    </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
+                    <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
+                    https://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>',
+            "text": 'Welcome to IcoWall!\n\nVerify your email, click the link below\nhttps://www.icowall.io/emailverification?id='+user.unconfirmed,
+            "subject": 'Email verification',
+            "from_email": 'info@icowall.io',
+            "from_name": "IcoWall",
+            "to": [{
+                    "email": user.email,
+                    "name": user.username,
+                    "type": "to"
+                }],
+            "important": false,
+            "track_clicks": true
+        };
+        var async = false;
+        mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+            console.log(result);
+        }, function(e) {
+            // Mandrill returns the error as an object with name and message keys
+            console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+            // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+        });
+        res.status(200).json({message:"Email confirmed"});
       }else{
         res.status(401).json({message:"Invalid link"});
       }
@@ -372,25 +406,32 @@ module.exports = function(app) {
       console.log(user)
       if(user.value){
         const mailInfo = {
-            from: 'IcoWall <info@icowall.io>',
-            to: user.value.email,
-            subject: 'IcoWall Password reset',
-            text: 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttps://www.icowall.io/passwordrecovery?id='+recover_string,
-            html: '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
-            <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
-            <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
-            </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Hi '+user.value.username+'!</h2><p style="color: #fff">As you have requested for reset password instructions, click the link below</p>\
-            <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/passwordrecovery?id='+recover_string+'">\
-            https://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>'
-          };
-          mailgun.messages().send(mailInfo, function (error, body) {
-            if(error){
-              console.log(error)
-              res.status(408).json({message:"Error sending the email"}); 
-            }else{
-              res.status(200).json({message:"Email sent"});
-            }
-          });
+            "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
+                    <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
+                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
+                    </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Hi '+user.value.username+'!</h2><p style="color: #fff">As you have requested for reset password instructions, click the link below</p>\
+                    <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/passwordrecovery?id='+recover_string+'">\
+                    https://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>',
+            "text": 'Hi '+user.value.username+'!\n\nAs you have requested for reset password instructions, click the link below\nhttps://www.icowall.io/passwordrecovery?id='+recover_string,
+            "subject": 'Password reset',
+            "from_email": 'info@icowall.io',
+            "from_name": "IcoWall",
+            "to": [{
+                    "email": user.value.email,
+                    "name": user.value.username,
+                    "type": "to"
+                }],
+            "important": false,
+            "track_clicks": true
+        };
+        var async = false;
+        mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+            console.log(result);
+            res.status(200).json({message:"Email sent"});
+        }, function(e) {
+            console.log(e)
+            res.status(408).json({message:"Error sending the email"}); 
+        });
       }else{
         res.status(401).json({message:"Invalid email"});
       }

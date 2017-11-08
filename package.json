@@ -22,6 +22,7 @@
     "get-json": "^1.0.0",
     "jsonwebtoken": "^8.1.0",
     "mailgun-js": "^0.13.1",
+    "mandrill-api": "^1.0.45",
     "mongodb": "^2.2.31",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.0"
