@@ -643,6 +643,10 @@ textarea {
 		right: 91%;
 	}
 
+	#grid-section {
+		margin-bottom: 0;
+	}
+
 	#grid-container {
 		height: 100%;
 		overflow: hidden;
