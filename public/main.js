@@ -76,7 +76,9 @@ const infoSection = document.getElementById("info-section"),
     imgPreviewContainer = document.getElementById("buy-grid"),
     gridContainer = document.getElementById("grid-container"),
     imgPreview = document.getElementById("icon-preview"),
+    countdownIntervals = [],
     gridAttr = gridAttributes(),
+
     inputImg = document.getElementById("icon");
     display  = new FileReader(); 
 
@@ -231,15 +233,68 @@ function populateInfo (parentElement, data, event) {
   populateElement(parentElement, {"type": "H1", "hasText": true, "text": data.name, "attributes": []});
   populateElement(parentElement, {"type": "A", "hasText": true, "text": data.web, 
                                   "attributes": [{"type": "href", "value": "http://"+web[web.length-1]}, {"type": "target", "value": "_blank"}]});
+  populateElement(parentElement, {"type": "DIV", "hasText": false, "text": "", "attributes": [{"type": "id", "value": "countdown"}]});
   populateElement(parentElement, {"type": "P", "hasText": true, "text": data.description, "attributes": []}); 
   let social = populateElement(parentElement, {"type": "DIV", "hasText": false, "text": "", "attributes": [{"type": "class", "value": "social-accounts"}]}); 
   for (const account in data.social){
     const link = data.social[account].split("//");
     if(data.social[account]){
       populateElement(social, {"type": "A", "hasText": false, "text": "", "attributes": [
-                                {"type": "href", "value": "http://"+link[link.length-1]}, {"type": "class", "value": "fa fa-" + account + " accounts"}]}); 
+                                {"type": "href", "value": "http://"+link[link.length-1]}, {"type": "class", "value": "fa fa-" + account + " accounts"}, {"type": "target", "value": "_blank"}]}); 
     }
   }
+  refreshClock(counter(data.date));
+  initializeClock(data.date);
+}
+
+function initializeClock(icoDate){
+  clearInterval(countdownIntervals[0]);
+  let timeinterval = setInterval(function(){  
+    let timeInfo = counter(icoDate);
+    if(timeInfo.total<=0){     
+      clearInterval(timeinterval);
+    }
+
+    // render countdown
+    if(timeInfo.total>=0){
+      refreshClock(timeInfo);
+    }
+  },1000);
+  countdownIntervals[0] = timeinterval;
+}
+
+function counter(icoDate) {
+  const remaining = Date.parse(icoDate) - Date.parse(new Date())
+  const dateInfo = { "total": remaining,
+    "seconds": Math.floor((remaining/1000) % 60 )>=10?Math.floor((remaining/1000) % 60 ) : '0'+Math.floor((remaining/1000) % 60 ),
+    "minutes": Math.floor( (remaining/1000/60) % 60 )>=10?Math.floor( (remaining/1000/60) % 60 ) : '0'+Math.floor( (remaining/1000/60) % 60 ),
+    "hours": Math.floor( (remaining/(1000*60*60)) % 24 )>=10?Math.floor( (remaining/(1000*60*60)) % 24 ) : '0'+Math.floor( (remaining/(1000*60*60)) % 24 ),
+    "days": Math.floor( remaining/(1000*60*60*24) )>=10?Math.floor( remaining/(1000*60*60*24) ) : '0'+Math.floor( remaining/(1000*60*60*24) )
+  }
+  return dateInfo;
+}
+
+function refreshClock(t) {
+  let clock = document.getElementById("countdown");
+  clock.innerHTML = "<div class='date-element-wraper'>\
+            <div class='date-number'>" + t.days + "</div>\
+          <h3 class='date-title'>DAYS</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>" + t.hours + "</div>\
+            <h3 class='date-title'>HOURS</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>" + t.minutes + "</div>\
+            <h3 class='date-title'>MINUTES</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>" + t.seconds + "</div>\
+            <h3 class='date-title'>SECONDS</h3>\
+          </div>";
 }
 
 function cleanElement (element) { 
@@ -268,7 +323,7 @@ function populateTable (parentElement, data, profile) {
       populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": [{"type": "class", "value": 'date-col'}]});
       if(profile) {
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.totalBlocks, "attributes": []});
-        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.cost, "attributes": []});
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.cost_btc+"_BTC - "+element.cost_eth+"_ETH", "attributes": []});
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Waiting", "attributes": []});
       }
       imgColumn.onclick = (event) => {
@@ -359,7 +414,8 @@ function setImgPreviewPosition (imgGridBlocks){
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
       + "<br>Block cost per month: " + cost + " BTC"
       + "<br>Rent period: " + document.getElementById("rent-weeks").value + period 
-      + "<br>Total cost: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost).toFixed(8) + " BTC";
+      + "<br><br>Total cost<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.btc).toFixed(8) + " BTC"
+      + "<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.eth).toFixed(8) + " ETH";
       // freezeImgPreview();
     }
   }

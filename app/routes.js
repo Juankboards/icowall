@@ -15,7 +15,7 @@ const express = require('express'),
     console.log()
     let db;
 
-    // require('dotenv').load();
+    require('dotenv').load();
 
     MongoClient.connect(process.env.DATABASE, (err, database) => {
       if (err) return console.log(err)
@@ -141,9 +141,9 @@ module.exports = function(app) {
   });
 
   apiRoutes.get("/blockcost", passport.authenticate('jwt', { session: false }), function (req, res) {
-    getCostInBTC().then((cost) => {
-      if(!cost){
-          res.status(404).json({message: "BTC price unavailable"});
+    getCost().then((cost) => {
+      if(!cost.btc || !cost.eth){
+          res.status(404).json({message: "Price unavailable"});
       }else{
         res.status(200).json({message: cost});
       } 
@@ -153,20 +153,49 @@ module.exports = function(app) {
   function getCostInBTC() {
     return new Promise((resolve,reject) => {
       let cost = 0;
-      getJSON('https://api.coindesk.com/v1/bpi/currentprice.json', function(error, response){ 
+      getJSON('https://api.coinmarketcap.com/v1/ticker/bitcoin/', function(error, response){ 
         if(error){
           reject(error)
         }else{
-          cost = parseFloat((process.env.BLOCK_COST/response.bpi['USD'].rate_float + 0.00000001).toFixed(8));  
+          cost = parseFloat((process.env.BLOCK_COST/parseFloat(response[0].price_usd) + 0.00000001).toFixed(8));  
           resolve(cost);    
         } 
       })
     })
   }
 
+  function getCostInETH() {
+    return new Promise((resolve,reject) => {
+      let cost = 0;
+      getJSON('https://api.coinmarketcap.com/v1/ticker/ethereum/', function(error, response){ 
+        if(error){
+          reject(error)
+        }else{
+          cost = parseFloat((process.env.BLOCK_COST/parseFloat(response[0].price_usd) + 0.00000001).toFixed(8));  
+          resolve(cost);    
+        } 
+      })
+    })
+  }
+
+  function getCost() {
+    return new Promise((resolve,reject) => {
+      const cost = {"btc": 0, "eth": 0};
+      getCostInBTC().then((btcCost) => {
+        cost.btc = btcCost;        
+        getCostInETH().then((ethCost) => {
+          cost.eth = ethCost;
+          resolve(cost);  
+        });
+      });  
+    })
+  }
+
+
   apiRoutes.post("/upload", passport.authenticate('jwt', { session: false }), function (req, res) {
-    getCostInBTC().then((cost) => {
-      const blockCost = cost;
+    getCost().then((cost) => {
+      const blockCostBtc = cost.btc;
+      const blockCostEth = cost.eth;
       const icon = {
         "name": req.body.name,
         "description": req.body.description,
@@ -178,7 +207,8 @@ module.exports = function(app) {
         "columns": req.body.columns,
         "rows": req.body.rows,
         "period": req.body.period,
-        "cost": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCost,
+        "cost_btc": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCostBtc,
+        "cost_eth": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCostEth,
         "approved": false,
         "userId": req.user._id,
         "social": {
@@ -230,9 +260,9 @@ module.exports = function(app) {
                                         <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
                                         <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Simply Iconic</p>\
                                         </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
-                                        <p style="color: #fff">Make the payment to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
+                                        <p style="color: #fff">Make the payment of '+ icon.cost_btc +'BTC to ############# or '+ icon.cost_btc +'ETH to #############<br>When we verify the payment your icon will be available on IcoWall to the public</p>\
                                         </div></div></html>',
-                    "text": 'Thanks for reserve on IcoWall!\nMake the payment to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
+                    "text": 'Thanks for reserve on IcoWall!\nMake the payment of '+ icon.cost +' BTC to ############# or '+ icon.cost_btc +' ETH to #############\nWhen we verify the payment your icon will be available on IcoWall to the public',
                     "subject": 'Blocks reservation',
                     "from_email": 'info@icowall.io',
                     "from_name": "IcoWall",
