@@ -7,7 +7,6 @@ const express = require('express'),
     passport = require("passport"),
     aws = require('aws-sdk'),
     crypto = require('crypto'),
-    // mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN}),
     mandrill = require('mandrill-api/mandrill'),
     mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_API_KEY),
     MongoClient = require('mongodb').MongoClient,
@@ -15,7 +14,7 @@ const express = require('express'),
     console.log()
     let db;
 
-    require('dotenv').load();
+    // require('dotenv').load();
 
     MongoClient.connect(process.env.DATABASE, (err, database) => {
       if (err) return console.log(err)
@@ -129,13 +128,25 @@ module.exports = function(app) {
 
   apiRoutes.post('/contactmessage', (req, res) => {
     const mailInfo = {
-      from: 'IcoWall <info@icowall.io>',
-      to: "support@icowall.io",
-      subject: req.body.subject,
-      text: 'email: '+req.body.email+'\nmessage: '+req.body.message,
+      "text": 'email: '+req.body.email+'\nmessage: '+req.body.message,
+      "subject": req.body.subject,
+      "from_email": 'info@icowall.io',
+      "from_name": "IcoWall",
+      "to": [{
+              "email": support@icowall.io,
+              "name": "Support",
+              "type": "to"
+          }],
+      "important": false,
+      "track_clicks": true
     };
-    mailgun.messages().send(mailInfo, function (error, body) {
-      if(error){console.log(error)}
+    var async = false;
+    mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+        console.log(result);
+    }, function(e) {
+        // Mandrill returns the error as an object with name and message keys
+        console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+        // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
     });
     res.redirect("/");
   });
