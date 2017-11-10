@@ -324,7 +324,7 @@ function populateTable (parentElement, data, profile) {
       if(profile) {
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.totalBlocks, "attributes": []});
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.cost_btc+"_BTC - "+element.cost_eth+"_ETH", "attributes": []});
-        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Waiting", "attributes": []});
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Pending", "attributes": []});
       }
       imgColumn.onclick = (event) => {
           populateInfo(infoContainer, element, event);
