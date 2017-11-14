@@ -222,6 +222,7 @@ module.exports = function(app) {
         "cost_eth": parseInt(req.body.period)*parseInt(req.body.columnSize)*parseInt(req.body.rowSize)*blockCostEth,
         "approved": false,
         "userId": req.user._id,
+        "username": req.user.username,
         "social": {
           "facebook": req.body.facebook,
           "twitter": req.body.twitter,
@@ -288,6 +289,27 @@ module.exports = function(app) {
                 };
                 var async = false;
                 mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+                    console.log(result);
+                }, function(e) {
+                    // Mandrill returns the error as an object with name and message keys
+                    console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+                    // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+                });
+                const reservationInfo = {
+                    "text": 'Blocks reservation:\n' + JSON.stringify(icon),
+                    "subject": 'Block Reservation',
+                    "from_email": 'info@icowall.io',
+                    "from_name": "IcoWall",
+                    "to": [{
+                            "email": "support@icowall.io",
+                            "name": "Support",
+                            "type": "to"
+                        }],
+                    "important": false,
+                    "track_clicks": true
+                };
+                var async = false;
+                mandrill_client.messages.send({"message": reservationInfo, "async": async}, function(result) {
                     console.log(result);
                 }, function(e) {
                     // Mandrill returns the error as an object with name and message keys
