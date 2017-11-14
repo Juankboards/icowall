@@ -301,7 +301,7 @@ module.exports = function(app) {
                     "from_email": 'info@icowall.io',
                     "from_name": "IcoWall",
                     "to": [{
-                            "email": "support@icowall.io",
+                            "email": "info@icowall.io",
                             "name": "Support",
                             "type": "to"
                         }],
