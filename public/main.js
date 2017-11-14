@@ -112,7 +112,6 @@ window.onload = (function () {
 //helpers
 function gridAttributes () {
   const grid = document.getElementById("grid").getBoundingClientRect();
-  console.log(grid)
   let width = grid.width,
       height = grid.height,
       top = grid.top,
@@ -251,13 +250,9 @@ function initializeClock(icoDate){
   clearInterval(countdownIntervals[0]);
   let timeinterval = setInterval(function(){  
     let timeInfo = counter(icoDate);
-    if(timeInfo.total<=0){     
+    refreshClock(timeInfo);
+    if(timeInfo.total<=0 || isNaN(timeInfo.total)){     
       clearInterval(timeinterval);
-    }
-
-    // render countdown
-    if(timeInfo.total>=0){
-      refreshClock(timeInfo);
     }
   },1000);
   countdownIntervals[0] = timeinterval;
@@ -276,6 +271,7 @@ function counter(icoDate) {
 
 function refreshClock(t) {
   let clock = document.getElementById("countdown");
+  if(t.total>=0 && !isNaN(t.total)){
   clock.innerHTML = "<div class='date-element-wraper'>\
             <div class='date-number'>" + t.days + "</div>\
           <h3 class='date-title'>DAYS</h3>\
@@ -295,6 +291,27 @@ function refreshClock(t) {
               <div class='date-number'>" + t.seconds + "</div>\
             <h3 class='date-title'>SECONDS</h3>\
           </div>";
+  } else{
+    clock.innerHTML = "<div class='date-element-wraper'>\
+            <div class='date-number'>00</div>\
+          <h3 class='date-title'>DAYS</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>00</div>\
+            <h3 class='date-title'>HOURS</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>00</div>\
+            <h3 class='date-title'>MINUTES</h3>\
+          </div>\
+          <div class='date-separator'>:</div>\
+          <div class='date-element-wraper'>\
+              <div class='date-number'>00</div>\
+            <h3 class='date-title'>SECONDS</h3>\
+          </div>";
+  }
 }
 
 function cleanElement (element) { 
@@ -310,7 +327,7 @@ function fillDate(value) {
 
 function populateTable (parentElement, data, profile) {
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
-    data.forEach((element) => {
+    data.forEach((element,id) => {
       let description = element.description.length>144?element.description.slice(0,145)+"..." : element.description;
       let date = new Date(element.date);
       let newRow = populateElement(parentElement, {"type": "TR", "hasText": false, "text": "", "attributes": []});
@@ -412,7 +429,8 @@ function setImgPreviewPosition (imgGridBlocks){
       document.getElementById("buy-modal").style.display = "block";
       document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
-      + "<br>Block cost per month: " + cost + " BTC"
+      + "<br>Block cost per month: " + cost.btc + " BTC<br>"
+      + cost.eth + " ETH"
       + "<br>Rent period: " + document.getElementById("rent-weeks").value + period 
       + "<br><br>Total cost<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.btc).toFixed(8) + " BTC"
       + "<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.eth).toFixed(8) + " ETH";

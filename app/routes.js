@@ -47,7 +47,7 @@ module.exports = function(app) {
           const mailInfo = {
               "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                       <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
-                      <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space</p>\
+                      <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: .83em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space<br>$.25 per block/week</p>\
                       </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
                       <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'">\
                       https://www.icowall.io/emailverification?id='+userInfo.unconfirmed+'</a></div></div></html>',
@@ -269,12 +269,13 @@ module.exports = function(app) {
                 const mailInfo = {
                     "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                                         <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
-                                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space</p>\
-                                        </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thanks for reserve on IcoWall!</h2>\
-                                        <p style="color: #fff">Make the payment of '+ icon.cost_btc +'BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA or '+ icon.cost_eth +'ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2 <br>When we verify the payment your icon will be available on IcoWall to the public</p>\
+                                        <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: .83em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space<br>$.25 per block/week</p>\
+                                        </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thank you for reserving your space on IcoWall!</h2>\
+                                        <p style="color: #fff">Please make a payment of<br>'+ icon.cost_btc +'BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA<br>or<br>'+ icon.cost_eth +'ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2<br>When we verify the payment your icon will be available on IcoWall to the public.<br>\
+                                        Our experienced team also offers full end to end ICO advisory and marketing. Please contact info@icowall.io for information and pricing.</p>\
                                         </div></div></html>',
-                    "text": 'Thanks for reserve on IcoWall!\nMake the payment of '+ icon.cost +' BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA or '+ icon.cost_eth +' ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2 \nWhen we verify the payment your icon will be available on IcoWall to the public',
-                    "subject": 'Blocks reservation',
+                    "text": 'Thank you for reserving your space on IcoWall!\nMake the payment of '+ icon.cost +' BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA or '+ icon.cost_eth +' ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2 \nWhen we verify the payment your icon will be available on IcoWall to the public',
+                    "subject": 'Block Reservation',
                     "from_email": 'info@icowall.io',
                     "from_name": "IcoWall",
                     "to": [{
@@ -343,7 +344,7 @@ module.exports = function(app) {
         const mailInfo = {
             "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                     <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
-                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space</p>\
+                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: .83em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space<br>$.25 per block/week</p>\
                     </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Welcome to IcoWall!</h2><p style="color: #fff">Verify your email, click the link below</p>\
                     <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/emailverification?id='+user.unconfirmed+'">\
                     https://www.icowall.io/emailverification?id='+user.unconfirmed+'</a></div></div></html>',
@@ -449,7 +450,7 @@ module.exports = function(app) {
         const mailInfo = {
             "html": '<html><div style="background-color: #323a4d;width: 80%;max-width: 750px; padding: 25px; font-family: \'Jura\', sans-serif;">\
                     <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://icowall.io">\
-                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: 1.03em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space</p>\
+                    <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: .83em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space<br>$.25 per block/week</p>\
                     </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Hi '+user.value.username+'!</h2><p style="color: #fff">As you have requested for reset password instructions, click the link below</p>\
                     <a style="color: #fff; word-wrap: break-word;" href="https://www.icowall.io/passwordrecovery?id='+recover_string+'">\
                     https://www.icowall.io/passwordrecovery?id='+recover_string+'</a></div></div></html>',

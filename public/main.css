@@ -128,7 +128,7 @@ td {
 #title p, #list-title p{
 	font-family: 'superscr';
 	text-transform: uppercase;
-	font-size: .68em;
+	font-size: .63em;
 	text-align: center;
 }
 
@@ -350,6 +350,8 @@ table {
 	width: 100%;
 	height: auto;
 	cursor: pointer;
+	max-width: 200px;
+	max-height: 150px;
 }
 
 #icon, #upload-section {
@@ -474,7 +476,7 @@ form button {
 }
 
 #position-confirmation form {
-	top: 20%;
+	top: 15%;
 }
 
 #icon-registration form {
@@ -483,7 +485,7 @@ form button {
 
 #position-confirmation p {
 	position: relative;
-	top: 15%;
+	top: 10%;
 	font-size: 1.23em;
 	text-align: center;
 }
