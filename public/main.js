@@ -971,8 +971,8 @@ function isLogged() {
   if(session.logged){
     if(window.location.pathname.slice(1)!='profile') {
       const profileObj = {title: "Icowall-Profile", url: "profile"};
-      const path = window.location.pathname.slice(1);
       history.pushState(profileObj, profileObj.title, profileObj.url);
+      const path = window.location.pathname.slice(1);
       gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
     }
     const blocks = getUserBlock();  
