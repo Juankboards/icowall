@@ -47,21 +47,21 @@ const allIcons = {"icons": []}
 function historySection(path) {
   if(path == "") {
     history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }else if(path == "home") {
     document.getElementById("home").click();
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }else if(path == "list") {
     document.getElementById("list").click();
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }else if(path == "profile") {
     document.getElementById("account").click();
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }else if(path == "buy") {
     document.getElementById("buy").click();
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }else if(path.split("_")[0] == "ico") {
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
     let httpRequest = new XMLHttpRequest();            
     httpRequest.open('GET', '/api/getIcon?id='+path.split("_")[1], false);
     httpRequest.onreadystatechange = function () {
@@ -74,11 +74,11 @@ function historySection(path) {
     };
     httpRequest.send();
   } else if(path == "emailverification" || path == "passwordrecovery") {
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
     return;
   } else {
     showSection(invalidSection);
-    gtag('config', 'UA-109487361-1');
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }
 }
 
@@ -279,7 +279,8 @@ function populateInfo (parentElement, data, id, event) {
   if(window.location.pathname.slice(1)!="ico_" + data._id) {
     const listObj = {title: "IcoWall-Icon", url: "ico_" + data._id};
     history.pushState(listObj, listObj.title, listObj.url);
-    gtag('config', 'UA-109487361-1');
+    const path = window.location.pathname.slice(1);
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }
   if(event){
     event.stopPropagation();
@@ -388,7 +389,8 @@ function populateTable (parentElement, data, profile) {
   if(!profile && window.location.pathname.slice(1)!='list') {
     const listObj = {title: "IcoWall-List", url: "list"};
     history.pushState(listObj, listObj.title, listObj.url);
-    gtag('config', 'UA-109487361-1');
+    const path = window.location.pathname.slice(1);
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element,id) => {
@@ -969,8 +971,9 @@ function isLogged() {
   if(session.logged){
     if(window.location.pathname.slice(1)!='profile') {
       const profileObj = {title: "Icowall-Profile", url: "profile"};
+      const path = window.location.pathname.slice(1);
       history.pushState(profileObj, profileObj.title, profileObj.url);
-      gtag('config', 'UA-109487361-1');
+      gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
     }
     const blocks = getUserBlock();  
     document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
@@ -1062,7 +1065,8 @@ function checkPasswordConfirmationReset() {
 function populateHome(obj) {
   if(obj && window.location.pathname.slice(1)!=obj.url) {
     history.pushState(obj, obj.title, obj.url);
-    gtag('config', 'UA-109487361-1');
+    const path = window.location.pathname.slice(1);
+    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
   }
   cleanElement(iconsContainer);
   setIcons(iconsContainer, approvedIcons["icons"]);
