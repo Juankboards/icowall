@@ -1,5 +1,11 @@
+
+
 if(location.protocol==="http:"){
   window.location.replace("https://www.icowall.io");
+}else{
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
 }
 
 let path = window.location.pathname.slice(1);
@@ -41,15 +47,21 @@ const allIcons = {"icons": []}
 function historySection(path) {
   if(path == "") {
     history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
+    gtag('config', 'UA-109487361-1');
   }else if(path == "home") {
     document.getElementById("home").click();
+    gtag('config', 'UA-109487361-1');
   }else if(path == "list") {
     document.getElementById("list").click();
+    gtag('config', 'UA-109487361-1');
   }else if(path == "profile") {
     document.getElementById("account").click();
+    gtag('config', 'UA-109487361-1');
   }else if(path == "buy") {
     document.getElementById("buy").click();
+    gtag('config', 'UA-109487361-1');
   }else if(path.split("_")[0] == "ico") {
+    gtag('config', 'UA-109487361-1');
     let httpRequest = new XMLHttpRequest();            
     httpRequest.open('GET', '/api/getIcon?id='+path.split("_")[1], false);
     httpRequest.onreadystatechange = function () {
@@ -62,9 +74,11 @@ function historySection(path) {
     };
     httpRequest.send();
   } else if(path == "emailverification" || path == "passwordrecovery") {
+    gtag('config', 'UA-109487361-1');
     return;
   } else {
     showSection(invalidSection);
+    gtag('config', 'UA-109487361-1');
   }
 }
 
@@ -265,6 +279,7 @@ function populateInfo (parentElement, data, id, event) {
   if(window.location.pathname.slice(1)!="ico_" + data._id) {
     const listObj = {title: "IcoWall-Icon", url: "ico_" + data._id};
     history.pushState(listObj, listObj.title, listObj.url);
+    gtag('config', 'UA-109487361-1');
   }
   if(event){
     event.stopPropagation();
@@ -373,6 +388,7 @@ function populateTable (parentElement, data, profile) {
   if(!profile && window.location.pathname.slice(1)!='list') {
     const listObj = {title: "IcoWall-List", url: "list"};
     history.pushState(listObj, listObj.title, listObj.url);
+    gtag('config', 'UA-109487361-1');
   }
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element,id) => {
@@ -954,6 +970,7 @@ function isLogged() {
     if(window.location.pathname.slice(1)!='profile') {
       const profileObj = {title: "Icowall-Profile", url: "profile"};
       history.pushState(profileObj, profileObj.title, profileObj.url);
+      gtag('config', 'UA-109487361-1');
     }
     const blocks = getUserBlock();  
     document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
@@ -1045,6 +1062,7 @@ function checkPasswordConfirmationReset() {
 function populateHome(obj) {
   if(obj && window.location.pathname.slice(1)!=obj.url) {
     history.pushState(obj, obj.title, obj.url);
+    gtag('config', 'UA-109487361-1');
   }
   cleanElement(iconsContainer);
   setIcons(iconsContainer, approvedIcons["icons"]);
