@@ -128,24 +128,46 @@ td {
 #title p, #list-title p{
 	font-family: 'superscr';
 	text-transform: uppercase;
-	font-size: .63em;
-	text-align: center;
+	font-size: .62em;
+	text-align: right;
+	margin-top: 5px;
 }
 
-#ico-title{
+#title p span, #list-title p span{
+	font-family: 'superscr';
+	font-size: .8em;
+}
+
+.ico-title{
 	font-family: 'barcode';
 	font-size: 2.2em;
 	position: relative;
 	top: 5px;
 }
 
-#wall-title{
+.invalid-code {
+	font-family: 'barcode';
+	font-size: 6em;
+}
+
+.wall-title{
     font-family: 'superscr';
 	font-size: 1.7em;
 	background: #fff;
 	color:  #282f3e;
 	padding: 0 0 0 5px;
 	margin-left: 3px;
+}
+
+#invalid-section div {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.invalid-phrase {
+	font-size: 1.7em;
+	color:  #fff;
 }
 
 #tools {
@@ -222,13 +244,17 @@ section {
 	cursor: pointer;
 }
 
-#info-section, #list-section, #profile-section {
+#info-section, #list-section, #profile-section, #invalid-section {
 	display: none;
 	width: 100%;
 	position: absolute;
 	top: 0;
 	background-color: #323a4d;
 	padding: 35px 10px 75px 0;
+}
+
+#invalid-section{
+	top: 40%;
 }
 
 #info-container .accounts {
@@ -665,6 +691,10 @@ textarea {
 		width: -moz-calc(100% - 70px);
 		width: calc(100% - 70px);
 		float: right;
+	}
+
+	#invalid-section{
+		top: 0;
 	}
 
 	.date-title{

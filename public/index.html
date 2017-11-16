@@ -11,8 +11,8 @@
 <body>
 	<div id="title">
 		<a href="">
-			<h3><span id="ico-title">ICO</span><span id="wall-title">WALL</span></h3>
-			<p>Rentable Ad Space<br>$.25 per block/week</p>
+			<h3><span class="ico-title">ICO</span><span class="wall-title">WALL</span></h3>
+			<p>Rentable Ad Space<br><span>$0.25&nbsp per&nbsp block/week</span></p>
 		</a>
 	</div>	
 	<div id="hover-title">
@@ -55,8 +55,8 @@
 		<div>
 			<div id="list-title">
 				<a href="">
-					<h3><span id="ico-title">ICO</span><span id="wall-title">WALL</span></h3>
-					<p>Rentable Ad Space<br>$.25 per block/week</p>
+					<h3><span class="ico-title">ICO</span><span class="wall-title">WALL</span></h3>
+					<p>Rentable Ad Space<br><span>$0.25&nbsp per&nbsp block/week</span></p>
 				</a>
 			</div>
 			<table id="list-table">
@@ -93,7 +93,7 @@
 		<div class="modal-content" onclick="(function(e) { e.preventDefault(); e.stopPropagation(); })(event)">
 			<span class="close" id="close-login">X</span>
 			<div id="login">
-				<h3><span id="ico-title">LOGIN</span></h3>			
+				<h3><span class="ico-title">LOGIN</span></h3>			
 				<form id="signin-form">	
 					<input name="username" type="text" id="username-login" placeholder="Username" required>
 					<br>			
@@ -104,7 +104,7 @@
 				</form>
 			</div>
 			<div id="signup">
-				<h3><span id="ico-title">REGISTER</span></h3>	
+				<h3><span class="ico-title">REGISTER</span></h3>	
 				<form id="signup-form">	
 					<input name="username" type="text" id="username" placeholder="Username" required>
 					<br>			
@@ -118,7 +118,7 @@
 				</form>
 			</div>
 			<div id="restore-password-email">
-				<h3><span id="ico-title">FORGOT PASSWORD</span></h3>			
+				<h3><span class="ico-title">FORGOT PASSWORD</span></h3>			
 				<form id="password-reset-email-form">
 					<h4>Please enter your email to send you a recovery link.</h4>
 					<input name="email" type="email" id="user-email" placeholder="Email" required>
@@ -130,7 +130,7 @@
 	<div id="buy-modal" class="modal">
 		<div class="modal-content" id="modal-content">			
 			<div id="position-confirmation">
-				<h3><span id="ico-title">CONFIRM POSITION</span></h3>
+				<h3><span class="ico-title">CONFIRM POSITION</span></h3>
 				<p id="position-info"></p>
 				<form>
 					<button type="button" id="cancel-position">CANCEL</button>
@@ -139,7 +139,7 @@
 			</div>
 			<div id="icon-registration">
 				<span class="close" id="close-buy">X</span>
-				<h3><span id="ico-title">BUY</span></h3>	
+				<h3><span class="ico-title">BUY</span></h3>	
 				<form id="ico-registration-form">	
 					<input type="text" id="name" placeholder="Name">
 					<br>			
@@ -206,7 +206,7 @@
 			</div>
 			<div id="icon-accounts">
 				<span class="close" id="close-accounts">X</span>
-				<h3><span id="ico-title">LINK ACCOUNTS</span></h3>
+				<h3><span class="ico-title">LINK ACCOUNTS</span></h3>
 				<form id="form-accounts">
 					<input type="text" id="facebook" placeholder="Facebook">
 					<input type="text" id="twitter" placeholder="Twitter">
@@ -224,7 +224,7 @@
 		<div class="modal-content">		
 			<span class="close" id="close-password">X</span>	
 			<div id="password-recovery">
-				<h3><span id="ico-title">PASSWORD RECOVERY</span></h3>			
+				<h3><span class="ico-title">PASSWORD RECOVERY</span></h3>			
 				<form id="password-recovery-form">	
 					<input name="new" type="password" id="new-password-reset" placeholder="New password">
 					<br>			
@@ -272,7 +272,7 @@
 		<div class="modal-content" onclick="(function(e) { e.stopPropagation(); })(event)">		
 			<span class="close" id="close-contact">X</span>	
 			<div id="contact">
-				<h3><span id="ico-title">CONTACT US</span></h3>			
+				<h3><span class="ico-title">CONTACT US</span></h3>			
 				<form action="/api/contactmessage" method="POST" id="contact-form">	
 					<input name="email" type="email" id="contact-email" placeholder="Email" required>
 					<br>
@@ -284,6 +284,9 @@
 			</div>
 		</div>
 	</div>
+	<section id="invalid-section">
+		<div><span class="invalid-code">404</span><br><span class="invalid-phrase">This page is not available. Sorry about that.</span></div>
+	</section>
 </body>
 <script src="main.js"></script>
 <script>window.twttr = (function(d, s, id) {

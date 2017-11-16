@@ -10,6 +10,7 @@ const express = require('express'),
     mandrill = require('mandrill-api/mandrill'),
     mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_API_KEY),
     MongoClient = require('mongodb').MongoClient,
+    ObjectId = require('mongodb').ObjectID;
     getJSON = require('get-json');
     console.log()
     let db;
@@ -84,6 +85,20 @@ module.exports = function(app) {
         res.status(200).json({"icons": result});
       } else{
         res.status(400).json({"message": "Unable to get Icons"});
+      }  
+    })  
+  });
+
+  apiRoutes.get('/getIcon', (req, res) => {
+    const id = ObjectId(req.query.id);
+    const query = {};
+    query["_id"] = id;
+    db.collection("icons").findOne(query, function(err, icon){
+      if (err) throw err
+      if(icon){
+        res.status(200).json({"icon": icon});
+      } else{
+        res.status(400).json({"message": "Invalid ID"});
       }  
     })  
   });

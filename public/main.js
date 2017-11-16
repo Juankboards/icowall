@@ -14,6 +14,7 @@ if(path == "emailverification") {
       swal("Awesome!", "You're email was verified. Now login to your account", "success");
     } else {
       swal("Ooos!", "Invalid URL", "error");
+      history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
     }
   };
   httpRequest.send();  
@@ -28,6 +29,7 @@ if(path == "passwordrecovery") {
       document.getElementById("password-recovery-modal").style.display = "block";
     } else {
       swal("Ooos!", "Invalid URL", "error");
+      history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
     }
   };
   httpRequest.send();  
@@ -35,6 +37,36 @@ if(path == "passwordrecovery") {
 
 const approvedIcons = {"icons": []};
 const allIcons = {"icons": []}
+
+function historySection(path) {
+  if(path == "") {
+    history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
+  }else if(path == "home") {
+    document.getElementById("home").click();
+  }else if(path == "list") {
+    document.getElementById("list").click();
+  }else if(path == "profile") {
+    document.getElementById("account").click();
+  }else if(path == "buy") {
+    document.getElementById("buy").click();
+  }else if(path.split("_")[0] == "ico") {
+    let httpRequest = new XMLHttpRequest();            
+    httpRequest.open('GET', '/api/getIcon?id='+path.split("_")[1], false);
+    httpRequest.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        populateInfo (infoContainer, JSON.parse(this.responseText).icon);
+        showSection(infoSection);
+      }else{
+        showSection(invalidSection);
+      }
+    };
+    httpRequest.send();
+  } else if(path == "emailverification" || path == "passwordrecovery") {
+    return;
+  } else {
+    showSection(invalidSection);
+  }
+}
 
 function getApprovedIcons() {
   let httpRequest = new XMLHttpRequest();            
@@ -68,6 +100,7 @@ const infoSection = document.getElementById("info-section"),
     feedSection = document.getElementById("feed"),
     subsSection = document.getElementById("subscribe-wrapper"),
     uploadSection = document.getElementById("upload-section"),
+    invalidSection = document.getElementById("invalid-section"),
     gridSection = document.getElementById("grid-section"),
     listTable = document.getElementById("list-table"),
     infoContainer = document.getElementById("info-container"),
@@ -88,11 +121,11 @@ function init() {
   getApprovedIcons();
   getAllIcons();
   arrangeElement(iconsContainer, gridAttr);
-  populateHome();
+  populateHome(null);
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
   addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
-  addEvent(document.getElementById("home"), "click", populateHome, gridSection, feedSection, subsSection);
+  addEvent(document.getElementById("home"), "click", populateHome.bind(null, {title: "IcoWall-Home", url: "home"}), gridSection, feedSection, subsSection);
   addEvent(document.getElementById("account"), "click", isLogged, gridSection);
   addEvent(document.getElementById("buy"), "click", browseImage, gridSection, feedSection, subsSection);
   addEvent(document.getElementById("contact"), "click", contactUs.bind(null));
@@ -107,7 +140,12 @@ function init() {
 
 window.onload = (function () {
   init();
+  historySection(path);
 })();
+
+window.onpopstate = function(event) {
+  historySection(window.location.pathname.slice(1));
+}
 
 //helpers
 function gridAttributes () {
@@ -142,7 +180,7 @@ function arrangeElement (element, attributes) {
 function setIcons (parentElement, elements) {
   const sizeProportion = getSizeProportion();
   const blockProperties = getImgGridBlocks(iconsContainer);
-  elements.forEach((element) => {
+  elements.forEach((element, id) => {
     elementAttributes = {"type": "IMG", 
       "hasText": false, "text": "", 
       "attributes": [{"type": "src", "value": element.filename},
@@ -153,7 +191,7 @@ function setIcons (parentElement, elements) {
     let newIcon = populateElement(parentElement, elementAttributes);
     arrangeElement(newIcon, {"top": Math.round(element.rows[0]*blockProperties.size), "left": Math.round(element.columns[0]*blockProperties.size)});
     makeElementBlocksUnavailable(element); //later not her but when buy blocks
-    addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element), infoSection);
+    addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element, id), infoSection);
     addEvent(newIcon, "mousemove", setTitlePosition.bind(null));
     addEvent(newIcon, "mouseover", showTitle.bind(null, element));
   });
@@ -223,8 +261,14 @@ function showSection(...elements) {
   }
 }
 
-function populateInfo (parentElement, data, event) {
-  event.stopPropagation();
+function populateInfo (parentElement, data, id, event) {
+  if(window.location.pathname.slice(1)!="ico_" + data._id) {
+    const listObj = {title: "IcoWall-Icon", url: "ico_" + data._id};
+    history.pushState(listObj, listObj.title, listObj.url);
+  }
+  if(event){
+    event.stopPropagation();
+  }
   document.getElementById("hover-title").style.display = "none";
   const web = data.web.split("//");
   cleanElement(parentElement);
@@ -326,6 +370,10 @@ function fillDate(value) {
 }
 
 function populateTable (parentElement, data, profile) {
+  if(!profile && window.location.pathname.slice(1)!='list') {
+    const listObj = {title: "IcoWall-List", url: "list"};
+    history.pushState(listObj, listObj.title, listObj.url);
+  }
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element,id) => {
       let description = element.description.length>144?element.description.slice(0,145)+"..." : element.description;
@@ -335,7 +383,7 @@ function populateTable (parentElement, data, profile) {
       populateElement(imgColumn, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": element.filename}]});
       populateElement(newRow, {"type": "TD", "hasText": true, "text": element.name, "attributes": [{"type": "class", "value": 'name-col'}]});
       if(!profile) {
-       populateElement(newRow, {"type": "TD", "hasText": true, "text": description, "attributes": [{"type": "class", "value": 'description-col'}]});
+        populateElement(newRow, {"type": "TD", "hasText": true, "text": description, "attributes": [{"type": "class", "value": 'description-col'}]});
       }
       populateElement(newRow, {"type": "TD", "hasText": true, "text": ""+fillDate(date.getUTCMonth()+1)+"-"+fillDate(date.getUTCDate())+"-"+date.getUTCFullYear(), "attributes": [{"type": "class", "value": 'date-col'}]});
       if(profile) {
@@ -344,7 +392,7 @@ function populateTable (parentElement, data, profile) {
         populateElement(newRow, {"type": "TD", "hasText": true, "text": element.approved?"Approved":"Pending", "attributes": []});
       }
       imgColumn.onclick = (event) => {
-          populateInfo(infoContainer, element, event);
+          populateInfo(infoContainer, element, id, event);
           listSection.style.display = "none";
           infoSection.style.display = "block";
       
@@ -368,7 +416,7 @@ function browseImage() {
   document.getElementById("ratio").className = "";
   document.getElementById("no-ratio").className = "hide-scale-option";
   cleanImgPreview(); 
-  populateHome();
+  populateHome({title: "IcoWall-Buy", url: "buy"});
   inputImg.click(); //select image
 }
 
@@ -853,6 +901,7 @@ function login() {
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("close-login").click();
+      document.getElementById("account").click();
     } else {
       if (this.status == 402) {
         swal({
@@ -902,6 +951,10 @@ function resendVerificationEmail(username) {
 function isLogged() {
   const session = checkSession();
   if(session.logged){
+    if(window.location.pathname.slice(1)!='profile') {
+      const profileObj = {title: "Icowall-Profile", url: "profile"};
+      history.pushState(profileObj, profileObj.title, profileObj.url);
+    }
     const blocks = getUserBlock();  
     document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
                                                         <h3>"+session.user.email+"</h3>";
@@ -989,7 +1042,10 @@ function checkPasswordConfirmationReset() {
     return true;
 }
 
-function populateHome() {
+function populateHome(obj) {
+  if(obj && window.location.pathname.slice(1)!=obj.url) {
+    history.pushState(obj, obj.title, obj.url);
+  }
   cleanElement(iconsContainer);
   setIcons(iconsContainer, approvedIcons["icons"]);
 }
