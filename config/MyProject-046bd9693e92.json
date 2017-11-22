@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "moonlit-app-185919",
+  "private_key_id": "046bd9693e92e65d9a6b25f1509af42673a76151",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuxmrwSmjP7LPy\nem0ADwj/f6rPiFwgJ+NJ7k+PcPuAhT6cnYB4u0oIm6LJtylmzNq0x4d9xtkV7cAz\nDttHhGzS6U7D9C7U8sraDDrLbrLkwRuRi4xHU98S5TA5FUfPXAeSwe8lfg0wK2DT\nMiyfluPJgJCgK89YHQVpBfcYzg/bGV5fKULRFrd8qDkVzekKtesjC488gAnCosHy\nbK+hq14EVADSA8Fc1wiGhS8xqb+C17fM4WXJb5ux7T5aMq2NRgaPqailJDLO3JER\ngDyGaG5Pj9szHAR6+nA9Ts5p7q58/iS0QCX0jxo9J1hpIMELhE2vjUz310q21IpP\nhlrcwiCVAgMBAAECggEAHLx8BcE+RX2mQqaVeG6AbL35gEDr4M+eI+A+jZemioWd\n+1M8Nd2ZeRvZ4q+ua3wgM5wg73G77MqYEO0O6c3gtLbun/Jsps+6wapEGoG7gTgt\nB7u5l1q3cVxkluYkVfhMOHmRkAkPMw3W0DLOOnktP8rXPLanU1YGNzPnYlkzKzNV\njZYd9ygMl7C/iXAlRv+YfkBYoUDmIyVb8gveIabMKtBIwlTztt26ZmmMN8aLqCG1\nFOxKAyvy2SNARfRi2GB+iKVSV7DRt/S61RDAnbtSag6SUmaFuHcPyz/fsw5i/zoy\nnAPIKNQ4ZYcmCbk/dhtzP8xULGUW+79C12+/yvxE8QKBgQDTmwkIRNCyFxdl9tJu\n7negRF56dd7DAN60H0zkMLQsFiVDW4lwAgzMHU2cpWp+5wnTZwAO9NpVaZswu9C8\niLIc0FcciWUvhJGvqp1cqtvDxo3hWVDugIkpN8JCiG7AOPeOVUVvMBylFxz6iuxj\n4/GaUhsUXGi3XTfnV1iQAPVMfQKBgQDTcUdzhifUxWhcL6HPigrGORDRgP7raGnh\nPu3ByImtQ+zGf/O62sYGSbEmHEh72xkFQGrlr47M1ORRp9KLnTxthwU3cqjTTiFt\nsgSCyaA3Fog1k/kyTDKTMWnWeDEvVceoSoPHfXZWLLceVNHG/4UUPhupNn3Usv53\n4V6SvNGX+QKBgQCt2Ec5Zd/XECWG/ZqwzHW3U7QTA9d5ebN9Y+G171V2itMeXYuy\nW9zLrJ9gvH2buJBX/90KbJsbZOG8zfCVk/BQv9FxfmeE/HL8UT1rLmvSkcNqigh1\niWAmXsrYAmKKxcKMSv36dRpzf2Otaoj/H/wT/rSEq87UJl+RTi9ST5c3uQKBgCfX\nd4w4IjdAf1qniwjtTPxu8lFXyjEXeqP71JcoL3EblHkO0SFLafbzWdMBj1LvRPat\nXbcr7m+ASgls4wp1tVY6E+yPyWoPldLysVDnpy3aLA5UdKdankkIDZZhDXuK4VU/\nvTcQ2ASC5nprpx+lNDFNRq8K2okCtVpneAeUVrYZAoGAHtabVfKth+AmKlOeX8xQ\nlV3vfi5wdHffX3bgYjYEFcl9oLPFsye7egH0H1YytQelXA1PGCbWxvdT7GhLjuzU\n6+rYq849OwiEVW9KUubVWpXcwGcS6MsPGuo3s6Il/6U3wHeJU2rCfCIvuIIHcOdp\n6rbJBqYpxlZYnZ/VI2dkHvk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "unique-users@moonlit-app-185919.iam.gserviceaccount.com",
+  "client_id": "104641691066846666054",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/unique-users%40moonlit-app-185919.iam.gserviceaccount.com"
+}

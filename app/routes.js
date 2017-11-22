@@ -7,12 +7,13 @@ const express = require('express'),
     passport = require("passport"),
     aws = require('aws-sdk'),
     crypto = require('crypto'),
+    google = require('googleapis'),
+    analyticsAuth = require('./../config/MyProject-046bd9693e92.json')
     mandrill = require('mandrill-api/mandrill'),
     mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_API_KEY),
     MongoClient = require('mongodb').MongoClient,
-    ObjectId = require('mongodb').ObjectID;
+    ObjectId = require('mongodb').ObjectID,
     getJSON = require('get-json');
-    console.log()
     let db;
 
     // require('dotenv').load();
@@ -21,6 +22,10 @@ const express = require('express'),
       if (err) return console.log(err)
       db = database;
     })
+
+    let jwtClient = new google.auth.JWT(
+      analyticsAuth.client_email, null, analyticsAuth.private_key,
+      ['https://www.googleapis.com/auth/analytics.readonly'], null);
 
 module.exports = function(app) {  
 
@@ -87,6 +92,29 @@ module.exports = function(app) {
         res.status(400).json({"message": "Unable to get Icons"});
       }  
     })  
+  });
+
+  apiRoutes.get('/getUniqueUsers', (req, res) => {
+    jwtClient.authorize(function (err, tokens) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      let analytics = google.analytics('v3');
+      analytics.data.ga.get({
+        'auth': jwtClient,
+        'ids': process.env.ANALYTICS_VIEW_ID,
+        'metrics': 'ga:users',
+        'start-date': '7daysAgo',
+        'end-date': 'today',
+      }, function (err, response) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        res.status(200).json({"users": response.rows[0][0]});
+      }); 
+    });
   });
 
   apiRoutes.get('/getIcon', (req, res) => {

@@ -20,6 +20,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.16.0",
     "get-json": "^1.0.0",
+    "googleapis": "^22.2.0",
     "jsonwebtoken": "^8.1.0",
     "mandrill-api": "^1.0.45",
     "mongodb": "^2.2.31",

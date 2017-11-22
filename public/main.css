@@ -200,6 +200,20 @@ td {
 	font-family: superscr;
 }
 
+#user {
+	position: fixed;
+	bottom: 50px;
+	text-align: center;
+	width: 100%;
+	z-index: 100;
+	background: #282F3E;
+	height: 23px;
+}
+
+#user-counter {
+	margin: 0;
+}
+
 #ratio, #no-ratio {
 	position: fixed;
 	bottom: 125px;
@@ -656,6 +670,15 @@ textarea {
 		display: block;
 	}
 
+	#user {
+	    position: fixed;
+		bottom: 17%;
+		right: 30px;
+		height: 10px;
+	    width: unset;
+	    background: unset;
+	}
+
 	section{
 		height: 100%;
 		width: -webkit-calc(100% - 285px);
@@ -764,9 +787,9 @@ textarea {
 
 	.bottom-tape{
 		position: fixed;
-		bottom: 17%;
+		bottom: 15%;
 		width: 17%;
-		height: 10px;
+		height: 30px;
 		background-color: #282f3e;
 	}
 

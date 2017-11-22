@@ -1,5 +1,3 @@
-
-
 if(location.protocol==="http:"){
   window.location.replace("https://www.icowall.io");
 }else{
@@ -7,6 +5,17 @@ if(location.protocol==="http:"){
    function gtag(){dataLayer.push(arguments);}
    gtag('js', new Date());
 }
+
+function getUniqueUsers() {
+  const httpRequest = new XMLHttpRequest(); 
+  httpRequest.open('GET', '/api/getUniqueUsers', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("user-counter").innerHTML = "Unique visitors: " + JSON.parse(this.responseText).users;
+    }
+  };
+  httpRequest.send();
+} 
 
 let path = window.location.pathname.slice(1);
 let ratio = 1;
@@ -132,6 +141,7 @@ const infoSection = document.getElementById("info-section"),
 // will wrap all functionality 
 function init() {
   window.scrollTo(0, 0); //Always start at top of the page
+  getUniqueUsers();
   getApprovedIcons();
   getAllIcons();
   arrangeElement(iconsContainer, gridAttr);
