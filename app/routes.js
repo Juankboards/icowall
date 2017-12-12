@@ -105,7 +105,7 @@ module.exports = function(app) {
         'auth': jwtClient,
         'ids': process.env.ANALYTICS_VIEW_ID,
         'metrics': 'ga:users',
-        'start-date': '7daysAgo',
+        'start-date': '1daysAgo',
         'end-date': 'today',
       }, function (err, response) {
         if (err) {
@@ -255,6 +255,7 @@ module.exports = function(app) {
         "description": req.body.description,
         "web": req.body.web,
         "date": req.body.date,
+        "dateFinish": req.body.dateFinish,
         "columnSize": req.body.columnSize,
         "rowSize": req.body.rowSize,
         "totalBlocks": parseInt(req.body.columnSize)*parseInt(req.body.rowSize),
@@ -315,7 +316,7 @@ module.exports = function(app) {
                                         <div style="margin: 0 auto;text-align: center;"><a style="text-decoration: none;color: #fff" href="https://www.icowall.io">\
                                         <img style="width: 200px" src="https://s3.amazonaws.com/icowall/icon.png"><p style="font-size: .83em;text-align: center;margin: 0 0 0 5px;">Rentable Ad Space<br>$.25 per block/week</p>\
                                         </a></div><div style="margin: 45px auto 0px auto;"><h2 style="color: #fff;">Thank you for reserving your space on IcoWall!</h2>\
-                                        <p style="color: #fff">Please make a payment of<br>'+ icon.cost_btc +'BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA<br>or<br>'+ icon.cost_eth +'ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2<br>When we verify the payment your icon will be available on IcoWall to the public.<br>\
+                                        <p style="color: #fff">Please make a payment of<br>'+ icon.cost_btc +'BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvAc g<br>or<br>'+ icon.cost_eth +'ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2<br>When we verify the payment your icon will be available on IcoWall to the public.<br>\
                                         Our experienced team also offers full end to end ICO advisory and marketing. Please contact info@icowall.io for information and pricing.</p>\
                                         </div></div></html>',
                     "text": 'Thank you for reserving your space on IcoWall!\nMake the payment of '+ icon.cost +' BTC to 1MLhuxruKiy2s2qK6iVjTkRpaPzhjmkGvA or '+ icon.cost_eth +' ETH to 0xa9b774Db2C919484DC4bC26604a1fEb6EdD41af2 \nWhen we verify the payment your icon will be available on IcoWall to the public',

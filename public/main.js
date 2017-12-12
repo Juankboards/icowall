@@ -11,7 +11,7 @@ function getUniqueUsers() {
   httpRequest.open('GET', '/api/getUniqueUsers', false);
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("user-counter").innerHTML = "Unique visitors: " + JSON.parse(this.responseText).users;
+      document.getElementById("user-counter").innerHTML = "Unique visitors today: " + JSON.parse(this.responseText).users;
     }
   };
   httpRequest.send();
@@ -274,14 +274,24 @@ function addEvent (element, type, fn = ()=>{}, ...section) {
 
 function showSection(...elements) { 
   if(elements[0]){  
+    let isFeed = false;
     Array.from(document.body.getElementsByTagName("section")).forEach((element) => element.style.display = "none");
     elements.forEach((element) => {
         element.style.display = "block";
         document.getElementById("tools").style.display = "none";
         if(window.innerWidth < 1150) {
+          isFeed = true;
           document.getElementById("feed").style.display = "none";
         }
+        if(element.id == "feed"){
+          isFeed = true;
+        }
     })
+    if(isFeed){
+      document.getElementById("user").style.display = "block";
+    } else {
+      document.getElementById("user").style.display = "none";
+    }
   }
 }
 
@@ -312,16 +322,23 @@ function populateInfo (parentElement, data, id, event) {
                                 {"type": "href", "value": "http://"+link[link.length-1]}, {"type": "class", "value": "fa fa-" + account + " accounts"}, {"type": "target", "value": "_blank"}]}); 
     }
   }
-  refreshClock(counter(data.date));
-  initializeClock(data.date);
+  const start = counter(data.date);
+  if(start.total>=0){
+    refreshClock(start);
+    initializeClock(data.date);
+  }else{
+    refreshClock(counter(data.dateFinish));
+    initializeClock(data.dateFinish);
+  }
+  
 }
 
 function initializeClock(icoDate){
   clearInterval(countdownIntervals[0]);
-  let timeinterval = setInterval(function(){  
-    let timeInfo = counter(icoDate);
+  let timeinterval = setInterval(function(){ 
+  let timeInfo = counter(icoDate); 
     refreshClock(timeInfo);
-    if(timeInfo.total<=0 || isNaN(timeInfo.total)){     
+    if(timeInfo.total<=0 || isNaN(timeInfo.total)){   
       clearInterval(timeinterval);
     }
   },1000);
@@ -340,6 +357,7 @@ function counter(icoDate) {
 }
 
 function refreshClock(t) {
+  console.log(t)
   let clock = document.getElementById("countdown");
   if(t.total>=0 && !isNaN(t.total)){
   clock.innerHTML = "<div class='date-element-wraper'>\
@@ -505,7 +523,7 @@ function setImgPreviewPosition (imgGridBlocks){
       document.getElementById("buy-modal").style.display = "block";
       document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
-      + "<br>Block cost per month: " + cost.btc + " BTC<br>"
+      + "<br>Block cost per week: " + cost.btc + " BTC<br>"
       + cost.eth + " ETH"
       + "<br>Rent period: " + document.getElementById("rent-weeks").value + period 
       + "<br><br>Total cost<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.btc).toFixed(8) + " BTC"
@@ -681,12 +699,14 @@ document.getElementById("blocks-rows").onchange = function (event) {
 function iconRegistration(imgGridBlocks) {
   const formInfo = document.getElementById("ico-registration-form");
   const formAccounts = document.getElementById("form-accounts");
-  const imgBlocks = getImgPrevBlocks(imgGridBlocks);
+  console.log(formInfo[8].value, formInfo[6].value,formInfo[7].value)
+  const imgBlocks = getImgPrevBlocks(imgGridBlocks);  
   const imgInfo = {
     "name": formInfo[0].value,
     "description": formInfo[1].value,
     "web": formInfo[2].value,
     "date": new Date(parseInt(formInfo[5].value),parseInt(formInfo[3].value)-1,parseInt(formInfo[4].value)),
+    "dateFinish": new Date(parseInt(formInfo[8].value),parseInt(formInfo[6].value)-1,parseInt(formInfo[7].value)),
     "columnSize": document.getElementById("blocks-columns").value,
     "rowSize": document.getElementById("blocks-rows").value,
     "columns": [imgBlocks[0], imgBlocks[1]],

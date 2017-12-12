@@ -212,6 +212,7 @@ td {
 
 #user-counter {
 	margin: 0;
+	font-size: unset;
 }
 
 #ratio, #no-ratio {
@@ -453,7 +454,7 @@ table {
 }
 
 #buy-modal .modal-content {
-	height: 445px;
+	height: 550px;
 }
 
 #buy-modal .modal-accounts {
@@ -539,6 +540,11 @@ form button {
 	margin: 0 0 10px 0;
 }
 
+.modal .date-title {
+	margin-bottom: 5px;
+	font-size: .75em;
+}
+
 #cancel-position {
 	margin: 0 4% 0 0;
 	background-color: rgba(150,0,0,0.8);
@@ -579,7 +585,7 @@ textarea {
 	cursor: pointer;
 }
 
-#feed {
+#feed{
 	display: none;
 }
 
@@ -672,11 +678,15 @@ textarea {
 
 	#user {
 	    position: fixed;
-		bottom: 17%;
-		right: 30px;
+		top: 18%;
+		right: 15px;
 		height: 10px;
 	    width: unset;
 	    background: unset;
+	}
+
+	#user-counter {
+		font-size: .95em;
 	}
 
 	section{
@@ -758,7 +768,7 @@ textarea {
 	#feed {
 		display: block;
 		position: absolute;
-		top: 15%;
+		top: 20%;
 		right: 15px;
 		width: 17%;
 		height: 68%;
@@ -772,9 +782,9 @@ textarea {
 
 	.top-tape{
 		position: fixed;
-		top: 15%;
+		top: 20%;
 		width: 17%;
-		height: 100px;
+		height: 95px;
 		background-color: #282f3e;
 		padding: 20px 10px;
 	}
@@ -787,9 +797,9 @@ textarea {
 
 	.bottom-tape{
 		position: fixed;
-		bottom: 15%;
+		bottom: 12%;
 		width: 17%;
-		height: 30px;
+		height: 10px;
 		background-color: #282f3e;
 	}
 
