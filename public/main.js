@@ -1,142 +1,221 @@
-if(location.protocol==="http:"){
-  window.location.replace("https://www.icowall.io");
-}else{
-   window.dataLayer = window.dataLayer || [];
-   function gtag(){dataLayer.push(arguments);}
-   gtag('js', new Date());
-}
-
-function getUniqueUsers() {
-  const httpRequest = new XMLHttpRequest(); 
-  httpRequest.open('GET', '/api/getUniqueUsers', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("user-counter").innerHTML = "Unique visitors today: " + JSON.parse(this.responseText).users;
-    }
-  };
-  httpRequest.send();
-} 
-
+//INIT
 let path = window.location.pathname.slice(1);
 let ratio = 1;
+const approvedIcons = {"icons": []},
+    allIcons = {"icons": []},
+    unavailableBlocks = [],
+    countdownIntervals = [],
+    infoSection = getElement("info-section"),
+    listSection = getElement("list-section"),
+    feedSection = getElement("feed"),
+    subsSection = getElement("subscribe-wrapper"),
+    uploadSection = getElement("upload-section"),
+    invalidSection = getElement("invalid-section"),
+    gridSection = getElement("grid-section"),
+    listTable = getElement("list-table"),
+    infoContainer = getElement("info-container"),
+    iconsContainer = getElement("icons-container"),
+    imgPreviewContainer = getElement("buy-grid"),
+    gridContainer = getElement("grid-container"),
+    imgPreview = getElement("icon-preview"),
+    inputImg = getElement("icon"),
+    gridAttr = gridAttributes(),
+    display  = new FileReader(); 
 
-if(path == "emailverification") {
-  const queue = window.location.href.split("?")[1];
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('PUT', '/api/emailverification?'+queue, false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      swal("Awesome!", "You're email was verified. Now login to your account", "success");
-    } else {
-      swal("Ooos!", "Invalid URL", "error");
-      history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
-    }
-  };
-  httpRequest.send();  
-}
 
-if(path == "passwordrecovery") {
-  const queue = window.location.href.split("?")[1];
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/passwordrecovery?'+queue, false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("password-recovery-modal").style.display = "block";
-    } else {
-      swal("Ooos!", "Invalid URL", "error");
-      history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
-    }
-  };
-  httpRequest.send();  
-}
+//Routes function. Handle diff routes
 
-const approvedIcons = {"icons": []};
-const allIcons = {"icons": []}
-
-function historySection(path) {
+function router(path) {
   if(path == "") {
-    history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");    
   }else if(path == "home") {
-    document.getElementById("home").click();
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    getElement("home").click();    
   }else if(path == "list") {
-    document.getElementById("list").click();
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    getElement("list").click();    
   }else if(path == "profile") {
-    document.getElementById("account").click();
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    getElement("account").click();    
   }else if(path == "buy") {
-    document.getElementById("buy").click();
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
-  }else if(path.split("_")[0] == "ico") {
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
-    let httpRequest = new XMLHttpRequest();            
-    httpRequest.open('GET', '/api/getIcon?id='+path.split("_")[1], false);
-    httpRequest.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        populateInfo (infoContainer, JSON.parse(this.responseText).icon);
-        showSection(infoSection);
-      }else{
+    getElement("buy").click();    
+  }else if(path.split("_")[0] == "ico") {   
+    ajaxRequest('GET', '/api/getIcon?id='+path.split("_")[1], null, (res, err) => {
+      if(err){
         showSection(invalidSection);
+        return;
       }
-    };
-    httpRequest.send();
-  } else if(path == "emailverification" || path == "passwordrecovery") {
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
-    return;
+      populateInfo (infoContainer, JSON.parse(this.responseText).icon);
+      showSection(infoSection);
+    })
+  }else if(path == "emailverification") {
+    const queue = window.location.href.split("?")[1];
+    ajaxRequest('PUT', '/api/emailverification?'+queue, null, (res, err) => {
+      if(err){
+        swal("Ooos!", err, "error");
+        history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
+        return;
+      }
+      swal("Awesome!", "You're email was verified. Now login to your account", "success");
+    })
+  }else if(path == "passwordrecovery") {
+    const queue = window.location.href.split("?")[1];
+    ajaxRequest('GET', '/api/passwordrecovery?'+queue, null, (res, err) => {
+      if(err){
+        swal("Ooos!", err, "error");
+        history.replaceState({title:"IcoWall-Home", url:"home"}, "IcoWall-Home", "home");
+        return;
+      }
+      elementVisibility([{id:"password-recovery-modal", visibility: "block"}])
+    }) 
   } else {
-    showSection(invalidSection);
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    showSection(invalidSection);    
   }
 }
 
-function getApprovedIcons() {
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/getapprovedicons', false);
+//Everytime the url change call the route function
+window.onpopstate = function(event) {
+  router(window.location.pathname.slice(1));
+}
+
+//Common Functions -------------------------------------------------------------------------------
+
+function getElement(id) {
+  return document.getElementById(id)
+}
+
+function ajaxRequest(type, url, parameters, callback) {
+  const httpRequest = new XMLHttpRequest(); 
+  httpRequest.open(type, url, false);
   httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      approvedIcons.icons = JSON.parse(this.responseText).icons;
-    } 
+    if(this.readyState === 4){
+      if(this.status < 400) {
+        callback(JSON.parse(this.responseText).message, null);
+      }else{
+        callback(null, JSON.parse(this.responseText).message);
+      }
+    }
   };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.withCredentials = true;
+  if(type=='POST' || type=='PUT') {
+    httpRequest.send(JSON.stringify(parameters));
+  }
   httpRequest.send();
+}
+
+function modifyHtml(elements) {
+  elements.forEach((element) => {
+    getElement(element.id).innerHTML = element.content;
+  })
+}
+
+function elementVisibility(ids, visibility) {
+  ids.forEach((id, idx) => {
+    getElement(id).style.display = visibility[idx];
+  })
+}
+
+function addEvent (element, type, fn = ()=>{}, ...section) {
+  element.addEventListener(type, (event) => {
+    showSection(...section);
+    fn(event);
+  })
+}
+
+//check if info not registered already
+function checkUniqueFields(parameter) {
+    const input = getElement(parameter);
+    if (checkUniqueness(parameter, input)) {
+      return true;
+    }
+    return false;
+}
+
+//Check function used on form submition 
+function checkEmailFormat(email) {
+  const validEmail = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$/.test(email.toLowerCase());
+  return validEmail;
+}
+
+// check not empty
+function checkFill(value) {
+  if(value.length < 1) {
+    return false;
+  }
+  return true;
+}
+
+// check no space on username
+function checkSpace(value) {
+  const validEmail = /\s/.test(value);
+  return validEmail;
+}
+
+function checkPasswordConfirmation() {
+  const password = getElement("password"),
+    passwordConfirmation = getElement("password-confirmation");
+    if(password.value != passwordConfirmation.value){
+      passwordNotEqual(password, passwordConfirmation);
+      return false;
+    }
+    return true;
+}
+
+// Clean if password confirmation are not equal
+function passwordNotEqual(field1, field2){
+  field1.value = "";
+  field2.value = "";
+}
+
+// check password and password confirmation are equal
+function checkPasswordConfirmationReset() {
+  const password = getElement("new-password-reset"),
+    passwordConfirmation = getElement("confirm-password-reset");
+    if(password.value != passwordConfirmation.value){
+      passwordNotEqual(password, passwordConfirmation);
+      return false;
+    }
+    return true;
+}
+
+//Get actual state of the app (users, icons, reserved icons) ---------------------------------------
+
+function getUniqueUsers() {
+  ajaxRequest('GET', '/api/getUniqueUsers', null, (res, err) => {
+    if(err){
+      swal("Ooos!", err, "error");
+      return;
+    }
+    modifyHtml([{id: "user-counter", content: "Unique visitors today: " + res}])
+  })
+} 
+
+function getApprovedIcons() {
+  ajaxRequest('GET', '/api/getapprovedicons', null, (res, err) => {
+    if(err){
+      swal("Ooos!", err, "error");
+      return;
+    }
+    approvedIcons.icons = res;
+  })
 }
 
 function getAllIcons() {
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/getallicons', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      allIcons.icons = JSON.parse(this.responseText).icons;
-      allIcons.icons.forEach((icon, id, array) => {
-        if(!icon.approved){
-          array[id].filename = "img/reserved.png";
-        }
-      })
-    } 
-  };
-  httpRequest.send();
+  ajaxRequest('GET', '/api/getallicons', null, (res, err) => {
+    if(err){
+      swal("Ooos!", err, "error");
+      return;
+    }
+    allIcons.icons = res;
+    showReservePixelsPlaceholder(allIcons);
+  })
 }
 
-const infoSection = document.getElementById("info-section"),
-    listSection = document.getElementById("list-section"),
-    feedSection = document.getElementById("feed"),
-    subsSection = document.getElementById("subscribe-wrapper"),
-    uploadSection = document.getElementById("upload-section"),
-    invalidSection = document.getElementById("invalid-section"),
-    gridSection = document.getElementById("grid-section"),
-    listTable = document.getElementById("list-table"),
-    infoContainer = document.getElementById("info-container"),
-    unavailableBlocks = [], 
-    iconsContainer = document.getElementById("icons-container"),
-    imgPreviewContainer = document.getElementById("buy-grid"),
-    gridContainer = document.getElementById("grid-container"),
-    imgPreview = document.getElementById("icon-preview"),
-    countdownIntervals = [],
-    gridAttr = gridAttributes(),
-
-    inputImg = document.getElementById("icon");
-    display  = new FileReader(); 
+function showReservePixelsPlaceholder(allIcons) {
+  allIcons.icons.forEach((icon, id, array) => {
+    if(!icon.approved){
+      array[id].filename = "img/reserved.png";
+    }
+  })
+}
 
 // will wrap all functionality 
 function init() {
@@ -148,44 +227,47 @@ function init() {
   populateHome(null);
   arrangeImgPreviewGrid();
   const imgGridBlocks = getImgGridBlocks(imgPreviewContainer);
-  addEvent(document.getElementById("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
-  addEvent(document.getElementById("home"), "click", populateHome.bind(null, {title: "IcoWall-Home", url: "home"}), gridSection, feedSection, subsSection);
-  addEvent(document.getElementById("account"), "click", isLogged, gridSection);
-  addEvent(document.getElementById("buy"), "click", browseImage, gridSection, feedSection, subsSection);
-  addEvent(document.getElementById("contact"), "click", contactUs.bind(null));
+  addEvent(getElement("list"), "click", populateTable.bind(null, listTable, approvedIcons["icons"], false), listSection);
+  addEvent(getElement("home"), "click", populateHome.bind(null, {title: "IcoWall-Home", url: "home"}), gridSection, feedSection, subsSection);
+  addEvent(getElement("account"), "click", isLogged, gridSection);
+  addEvent(getElement("buy"), "click", browseImage, gridSection, feedSection, subsSection);
   addEvent(display, "loadend", () => imgPreview.src = display.result); 
   addEvent(inputImg, "change", loadImage);
   addEvent(imgPreview, "load", setImgPrevAttributes);
   addEvent(imgPreview, "click", unsetImgPreviewPosition);
   imgPreviewDragg(imgGridBlocks);  
   addEvent(imgPreviewContainer, "click", setImgPreviewPosition.bind(null, imgGridBlocks)); 
-  addEvent(document.getElementById("ico-registration-submit"), "click", iconRegistration.bind(null, imgGridBlocks));
+  addEvent(getElement("ico-registration-submit"), "click", iconRegistration.bind(null, imgGridBlocks));
 }
 
-window.onload = (function () {
-  init();
-  historySection(path);
-})();
 
-window.onpopstate = function(event) {
-  historySection(window.location.pathname.slice(1));
+//clean home and set icons
+function populateHome(obj) {
+  if(obj && window.location.pathname.slice(1)!=obj.url) {
+    history.pushState(obj, obj.title, obj.url);
+    const path = window.location.pathname.slice(1);
+    
+  }
+  cleanElement(iconsContainer);
+  setIcons(iconsContainer, approvedIcons["icons"]);
 }
 
-//helpers
+
+//Get the grid width, height, top and left pixel position. Those depends on the screen. Widht = Height
 function gridAttributes () {
-  const grid = document.getElementById("grid").getBoundingClientRect();
+  const grid = getElement("grid").getBoundingClientRect();
   let width = grid.width,
       height = grid.height,
       top = grid.top,
       left = grid.left;
-  if(window.innerWidth > 1150) {
-    width = grid.height;
+  if(window.innerWidth > 1150) { 
+    width = grid.height; //Adapts to the screen height
   } else {
-    height = grid.width;
-    top = 150;
+    height = grid.width; //Adapts to the screen width
+    top = 150; //Top margin
   }
   if(grid.width == 0){
-    left = grid.left - width/2;
+    left = grid.left - width/2; //left margin
   }
   return ({
         "width": width,
@@ -195,12 +277,15 @@ function gridAttributes () {
       });
 }
 
+//Set the position of an element in the grid
 function arrangeElement (element, attributes) {
   Object.keys(attributes).forEach((attr) => {
     element.style[attr] = attributes[attr] + "px";
   })
 }   
 
+
+//create html icon elements and set position on the grid
 function setIcons (parentElement, elements) {
   const sizeProportion = getSizeProportion();
   const blockProperties = getImgGridBlocks(iconsContainer);
@@ -214,23 +299,39 @@ function setIcons (parentElement, elements) {
     };
     let newIcon = populateElement(parentElement, elementAttributes);
     arrangeElement(newIcon, {"top": Math.round(element.rows[0]*blockProperties.size), "left": Math.round(element.columns[0]*blockProperties.size)});
-    makeElementBlocksUnavailable(element); //later not her but when buy blocks
-    addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element, id), infoSection);
-    addEvent(newIcon, "mousemove", setTitlePosition.bind(null));
-    addEvent(newIcon, "mouseover", showTitle.bind(null, element));
+    makeElementBlocksUnavailable(element); //Set unavaiable block on the buy grid
+    addEvent(newIcon, "click", populateInfo.bind(null, infoContainer, element, id), infoSection); //Show icon info on click
+    addEvent(newIcon, "mousemove", setTitlePosition.bind(null)); //Set the position of the mouseover title
+    addEvent(newIcon, "mouseover", showTitle.bind(null, element)); //Set the content of the mouseover title
   });
 } 
 
-function getSizeProportion () {
-  return document.getElementById("grid").width/1000;
+function setTitlePosition(event) {
+  getElement("hover-title").style.left = event.pageX + 5 + "px";
+  getElement("hover-title").style.top = event.pageY + 5 + "px";
 }
 
+function showTitle(element, event) {
+  event.stopPropagation();
+  getElement("hover-title").innerHTML = "<p>" + element.name + "</p>";
+  getElement("hover-title").style.display = "block";
+}
+
+
+//Calculate the width of the square sections of the grid (1000*1000 px)
+function getSizeProportion () {
+  return getElement("grid").width/1000;
+}
+
+
+//Create a new html element and add it to an existing on the DOM
 function populateElement (parentElement, options) {
   let newElement = createElement(options);
   appendElement(parentElement, newElement);
   return newElement;
 }
 
+//Create an html element
 function createElement (options) {
   let element = document.createElement(options.type);
 
@@ -245,6 +346,7 @@ function createElement (options) {
   return element;
 }
 
+//Add an html element inside another
 function appendElement (parentElement, childElement) {
   parentElement.appendChild(childElement);
 }
@@ -253,6 +355,9 @@ function makeElementBlocksUnavailable (element) {
   unavailableBlocks.push({"columnBlocks": element.columns, "rowBlocks": element.rows})
 }
 
+
+
+/////check this one
 function getElementBlocks (element) {
   const gridBlocks= Array.from({length: 100}, (_, id) => id),
     firstBlockXIndex = element.position.X/10,
@@ -265,47 +370,44 @@ function getElementBlocks (element) {
   return {"column": elementColumnBlocks, "row": elementRowBlocks};
 }  
 
-function addEvent (element, type, fn = ()=>{}, ...section) {
-  element.addEventListener(type, (event) => {
-    showSection(...section);
-    fn(event);
-  })
-}
 
+
+//Show sections on the DOM
 function showSection(...elements) { 
   if(elements[0]){  
     let isFeed = false;
-    Array.from(document.body.getElementsByTagName("section")).forEach((element) => element.style.display = "none");
+    Array.from(document.body.getElementsByTagName("section")).forEach((element) => element.style.display = "none"); //Hide all sections on the DOM
     elements.forEach((element) => {
         element.style.display = "block";
-        document.getElementById("tools").style.display = "none";
+        getElement("tools").style.display = "none";
         if(window.innerWidth < 1150) {
           isFeed = true;
-          document.getElementById("feed").style.display = "none";
+          getElement("feed").style.display = "none"; //On mobile it doesnt show twitter feed
         }
         if(element.id == "feed"){
           isFeed = true;
         }
     })
     if(isFeed){
-      document.getElementById("user").style.display = "block";
+      getElement("user").style.display = "block";
     } else {
-      document.getElementById("user").style.display = "none";
+      getElement("user").style.display = "none"; //if not twitter feed, not user counter
     }
   }
 }
 
 function populateInfo (parentElement, data, id, event) {
+  //update url and add to history
   if(window.location.pathname.slice(1)!="ico_" + data._id) {
     const listObj = {title: "IcoWall-Icon", url: "ico_" + data._id};
     history.pushState(listObj, listObj.title, listObj.url);
     const path = window.location.pathname.slice(1);
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    
   }
   if(event){
     event.stopPropagation();
   }
-  document.getElementById("hover-title").style.display = "none";
+  getElement("hover-title").style.display = "none";
   const web = data.web.split("//");
   cleanElement(parentElement);
   populateElement(parentElement, {"type": "IMG", "hasText": false, "text": "", "attributes": [{"type": "src", "value": data.filename}]});
@@ -333,6 +435,7 @@ function populateInfo (parentElement, data, id, event) {
   
 }
 
+// initialize clock for icon info
 function initializeClock(icoDate){
   clearInterval(countdownIntervals[0]);
   let timeinterval = setInterval(function(){ 
@@ -358,7 +461,7 @@ function counter(icoDate) {
 
 function refreshClock(t) {
   console.log(t)
-  let clock = document.getElementById("countdown");
+  let clock = getElement("countdown");
   if(t.total>=0 && !isNaN(t.total)){
   clock.innerHTML = "<div class='date-element-wraper'>\
             <div class='date-number'>" + t.days + "</div>\
@@ -402,6 +505,7 @@ function refreshClock(t) {
   }
 }
 
+// remove element from DOM
 function cleanElement (element) { 
   while (element.lastChild) {
     element.removeChild(element.lastChild);
@@ -418,7 +522,7 @@ function populateTable (parentElement, data, profile) {
     const listObj = {title: "IcoWall-List", url: "list"};
     history.pushState(listObj, listObj.title, listObj.url);
     const path = window.location.pathname.slice(1);
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
+    
   }
   if (parentElement.lastChild.localName != "tr" && data.length > 0){
     data.forEach((element,id) => {
@@ -447,6 +551,7 @@ function populateTable (parentElement, data, profile) {
   }
 }
 
+//unfreeze preview image
 function unsetImgPreviewPosition () {
   if(imgPreview.className){
     imgPreview.removeAttribute("class");
@@ -454,18 +559,20 @@ function unsetImgPreviewPosition () {
   }
 }
 
+//select image from user local
 function browseImage() {
   if(!checkSession().logged){
-    document.getElementById("account").click();
+    getElement("account").click();
     return;
   }
-  document.getElementById("ratio").className = "";
-  document.getElementById("no-ratio").className = "hide-scale-option";
+  getElement("ratio").className = "";
+  getElement("no-ratio").className = "hide-scale-option";
   cleanImgPreview(); 
   populateHome({title: "IcoWall-Buy", url: "buy"});
   inputImg.click(); //select image
 }
 
+//no image to upload
 function cleanImgPreview() {
   imgPreview.removeAttribute("src");
   imgPreview.removeAttribute("width");
@@ -473,6 +580,7 @@ function cleanImgPreview() {
   unsetImgPreviewPosition();
 }
 
+//set buy grid properties based on grid
 function arrangeImgPreviewGrid() {
   const imgPreviewGridAttributes = gridAttributes();
   imgPreviewGridAttributes.left -= window.innerWidth >= 1150? 70 : 0;
@@ -480,7 +588,7 @@ function arrangeImgPreviewGrid() {
   arrangeElement(imgPreviewContainer, imgPreviewGridAttributes);
 }
 
-
+//generate array with each block of the grid position
 function getImgGridBlocks(imgGrid) {
   const blockSize = imgGrid.style.width.split("px")[0]/100;
   const blocksX = Array.from({length: 101}, (_, block) => Math.round(block*blockSize) + parseInt(imgGrid.style.left.split("px")[0]));
@@ -488,11 +596,13 @@ function getImgGridBlocks(imgGrid) {
   return {"X": blocksX, "Y": blocksY, "size": blockSize};
 }
 
+//move preview image with mouse position
 function imgPreviewDragg(imgGridBlocks) {
   const leftAdjust = window.innerWidth >= 1150? 70 : 0;
   addEvent(imgPreviewContainer, "mousemove", setTempImgPreviewPosition.bind(null, imgGridBlocks.X, imgGridBlocks.Y, imgGridBlocks.size, leftAdjust));
 }
 
+//it set the preview image top and left position (not position selected)
 function setTempImgPreviewPosition (blocksX, blocksY, blockSize, leftAdjust, event) {
   if(!imgPreview.className){ //className is added when user select imgPreview position
     imgPreview.style.left = tempImgPreviewLeftPosition(event, blocksX, blocksY, blockSize, leftAdjust) + "px";
@@ -500,6 +610,7 @@ function setTempImgPreviewPosition (blocksX, blocksY, blockSize, leftAdjust, eve
   }
 }
 
+//set preview image left position 
 function tempImgPreviewLeftPosition (event, blocksX, blocksY, blockSize, leftAdjust) {
   if (blocksX[Math.round((event.pageX - leftAdjust - parseInt(imgPreviewContainer.style.left.split("px")[0]))/blockSize)]+imgPreview.width <= blocksX[blocksX.length -1] + 1){
     return blocksX[Math.floor((event.pageX - leftAdjust - parseInt(imgPreviewContainer.style.left.split("px")[0]))/blockSize)];
@@ -507,6 +618,7 @@ function tempImgPreviewLeftPosition (event, blocksX, blocksY, blockSize, leftAdj
   return blocksX[blocksX.length - 1 - Math.round(imgPreview.width/blockSize)];
 }
 
+//set preview image top position 
 function tempImgPreviewTopPosition (event, blocksX, blocksY, blockSize) {
   if (blocksY[Math.round((event.pageY - parseInt(imgPreviewContainer.style.top.split("px")[0]))/blockSize)]+imgPreview.height <= blocksY[blocksY.length -1] + 1){
     return blocksY[Math.floor((event.pageY - parseInt(imgPreviewContainer.style.top.split("px")[0]))/blockSize)];
@@ -514,36 +626,471 @@ function tempImgPreviewTopPosition (event, blocksX, blocksY, blockSize) {
   return blocksY[blocksX.length - 1 - Math.round(imgPreview.height/blockSize)];
 }
 
+//after click on a valid block, select the upload image coordinates
 function setImgPreviewPosition (imgGridBlocks){
   if(imgPreview.src != "" && !imgPreview.className){ 
-    const period = document.getElementById("rent-weeks").value>1? " Weeks":" Week"; 
+    const period = getElement("rent-weeks").value>1? " Weeks":" Week"; 
     const imgPrevBlocks = getImgPrevBlocks(imgGridBlocks);
     const cost = blockCost();
     if(validPosition(...imgPrevBlocks)){
-      document.getElementById("buy-modal").style.display = "block";
-      document.getElementById("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
+      getElement("buy-modal").style.display = "block";
+      getElement("position-info").innerHTML = "Position: X[" + imgPrevBlocks[0] + "-" + imgPrevBlocks[1] + "], Y[" + imgPrevBlocks[2] + "-" + imgPrevBlocks[3] + "]\
       <br>Total blocks: " + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)) 
       + "<br>Block cost per week: " + cost.btc + " BTC<br>"
       + cost.eth + " ETH"
-      + "<br>Rent period: " + document.getElementById("rent-weeks").value + period 
-      + "<br><br>Total cost<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.btc).toFixed(8) + " BTC"
-      + "<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(document.getElementById("rent-weeks").value)*cost.eth).toFixed(8) + " ETH";
-      // freezeImgPreview();
+      + "<br>Rent period: " + getElement("rent-weeks").value + period 
+      + "<br><br>Total cost<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(getElement("rent-weeks").value)*cost.btc).toFixed(8) + " BTC"
+      + "<br>" + ((imgPrevBlocks[1] - imgPrevBlocks[0] + 1) * (imgPrevBlocks[3] - imgPrevBlocks[2] + 1)*parseInt(getElement("rent-weeks").value)*cost.eth).toFixed(8) + " ETH";
     }
   }
 }
 
-document.getElementById("cancel-position").onclick = function(){
-  document.getElementById("buy-modal").style.display = "none";
+
+function getImgPrevBlocks(imgGridBlocks) {
+  const firstXblock = imgGridBlocks.X.indexOf(parseInt(imgPreview.style.left.split("px")[0])),
+   lastXblock = firstXblock + Math.round(imgPreview.width/imgGridBlocks.size) - 1,
+   firstYblock = imgGridBlocks.Y.indexOf(parseInt(imgPreview.style.top.split("px")[0])),
+   lastYblock = firstYblock + Math.round(imgPreview.height/imgGridBlocks.size) - 1;
+
+   return [firstXblock, lastXblock, firstYblock, lastYblock];
 }
 
-document.getElementById("accept-position").onclick = function(){
-  document.getElementById("position-confirmation").style.display = "none";
-  document.getElementById("icon-registration").style.display = "block";
+//check if the selected position is not used or reserved compairing with unavailable blocks
+function validPosition(firstXblock, lastXblock, firstYblock, lastYblock) {
+  return unavailableBlocks.every((unavailable) => validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, lastYblock));
 }
 
-document.getElementById("ico-registration-next").onclick = function(){
-  const formInfo = document.getElementById("ico-registration-form");
+//check if position selected dont cause the preview image overlap a registered or reserved position
+function validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, lastYblock) {
+  if((firstXblock >= unavailable.columnBlocks[0] && firstXblock <= unavailable.columnBlocks[1]) || (lastXblock >= unavailable.columnBlocks[0] && lastXblock <= unavailable.columnBlocks[1]) || (firstXblock < unavailable.columnBlocks[0] && lastXblock > unavailable.columnBlocks[1])){
+    if((firstYblock >= unavailable.rowBlocks[0] && firstYblock <= unavailable.rowBlocks[1]) || (lastYblock >= unavailable.rowBlocks[0] && lastYblock <= unavailable.rowBlocks[1]) || (firstYblock < unavailable.rowBlocks[0] && lastYblock > unavailable.rowBlocks[1])){
+      return false;
+    }
+  }
+  return true;
+}
+
+//set preview image width and height
+function setImgPrevAttributes() {
+  const sizeProportion = getSizeProportion(),
+   colBlocks = Math.round(imgPreview.width/10)<=100?Math.round(imgPreview.width/10):100,//In a grid with 1000x1000px each block is 10px width. Normalize
+   rowsBlocks = Math.round(imgPreview.height/10)<=100?Math.round(imgPreview.height/10):100,   
+   width = Math.round(colBlocks*10*sizeProportion),
+   height = Math.round(rowsBlocks*10*sizeProportion);
+   ratio = colBlocks/rowsBlocks;
+   setSizeToolsValues(colBlocks, rowsBlocks);
+
+  imgPreview.width = width <= 1000*sizeProportion? width : Math.round(1000*sizeProportion);
+  imgPreview.height = height <= 1000*sizeProportion? height : Math.round(1000*sizeProportion);
+}
+
+
+//update when change # of columns or rows
+function updateImgPrevAttributes(colBlocks, rowsBlocks) {
+  const sizeProportion = getSizeProportion();
+  if(colBlocks){
+    imgPreview.width = Math.round(colBlocks*10*sizeProportion);
+    if(getElement("no-ratio").className){
+      imgPreview.height = Math.round(Math.round(colBlocks/ratio)*10*sizeProportion);
+      getElement("blocks-rows").value = Math.round(colBlocks/ratio);
+    }
+  }
+
+  if(rowsBlocks){
+    imgPreview.height = Math.round(rowsBlocks*10*sizeProportion);
+    if(getElement("no-ratio").className){
+      imgPreview.width = Math.round(Math.round(rowsBlocks*ratio)*10*sizeProportion);
+      getElement("blocks-columns").value = Math.round(rowsBlocks*ratio);
+    }
+  }
+}
+
+//load selected image from user local machine
+function loadImage() {
+  const img = inputImg.files[0];
+  if(img) {
+    cleanElement(iconsContainer);
+    showSection(gridSection, uploadSection)
+    setIcons(iconsContainer, allIcons["icons"]); 
+    display.readAsDataURL(img);
+    getElement("feed").style.display = "none";
+    getElement("tools").style.display = "block";
+  }
+}
+
+//set initial values for colums and rows of preview image
+function setSizeToolsValues(columns, rows){
+  getElement("blocks-columns").value = columns;
+  getElement("blocks-rows").value = rows;
+}
+
+
+
+// DB API --------------------------------------------------------------------------------------------------------
+
+function iconRegistration(imgGridBlocks) {
+  const formInfo = getElement("ico-registration-form"),
+   formAccounts = getElement("form-accounts"),
+   imgBlocks = getImgPrevBlocks(imgGridBlocks),  
+   imgInfo = {
+    "name": formInfo[0].value,
+    "description": formInfo[1].value,
+    "web": formInfo[2].value,
+    "date": new Date(parseInt(formInfo[5].value),parseInt(formInfo[3].value)-1,parseInt(formInfo[4].value)),
+    "dateFinish": new Date(parseInt(formInfo[8].value),parseInt(formInfo[6].value)-1,parseInt(formInfo[7].value)),
+    "columnSize": getElement("blocks-columns").value,
+    "rowSize": getElement("blocks-rows").value,
+    "columns": [imgBlocks[0], imgBlocks[1]],
+    "rows": [imgBlocks[2], imgBlocks[3]],
+    "period": getElement("rent-weeks").value,
+    "image": imgPreview.src,
+    "facebook": formAccounts[0].value,
+    "twitter": formAccounts[1].value,
+    "github": formAccounts[2].value,
+    "telegram": formAccounts[3].value,
+    "bitcoin": formAccounts[4].value,
+    "reddit": formAccounts[5].value,
+    "slack": formAccounts[6].value
+  };
+
+  ajaxRequest('POST', '/api/upload', imgInfo, (res, err) => {
+    if(err){
+      swal("Something went wrong!", err, "error");
+      return;
+    }
+    getElement("close-accounts").click();
+    swal("Well done!", res, "success");
+  })
+}
+
+function checkUniqueness(parameter, input) {
+  let unique;
+  ajaxRequest('POST', '/api/uniqueness', {"parameter": parameter, "value": input.value}, (res, err) => {
+    if(err){
+      input.style.border = "1px solid #E34234";
+      swal("Ooops!", err, "warning");
+      unique =  false;
+    }
+    input.style.border = "none";
+    unique = true;
+  })
+  return unique;
+}
+
+function registerAccount() {
+  let submit = true;
+  let error = [];
+  const form = getElement("signup-form");
+  const userInfo = {
+    "username": form[0].value,
+    "email": form[1].value,
+    "password": form[2].value
+  }
+
+  if(!checkFill(userInfo.username)){
+    submit = false;
+    error.push("Enter a username")
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(checkSpace(userInfo.username)){
+    submit = false;
+    error.push("Don't use spaces on your username");
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(userInfo.email)){
+    submit = false;
+    error.push("Enter a valid email");
+    form[1].style.border = "1px solid #E34234";
+  } else {
+    if(!checkEmailFormat(userInfo.email)){
+      submit = false;
+      error.push("The email you provided is invalid");
+      form[1].style.border = "1px solid #E34234";
+    }
+  }
+
+  if(!checkFill(userInfo.password)){
+    submit = false;
+    error.push("Enter a password")
+    form[2].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(form[3].value)){
+    submit = false;
+    error.push("Confirm your password")
+    form[3].style.border = "1px solid #E34234";
+  }
+
+  if(!checkPasswordConfirmation()){
+    submit = false;
+    error.push("The passwords didn't match"); 
+  }
+  
+
+  if(!submit){
+    swal("Watch out!", error.join(", "), "warning");
+    return false;
+  }
+
+  ajaxRequest('POST', '/api/register', userInfo, (res, err) => {
+    if(err){
+      swal("Sorry!", err, "error");
+    }
+    getElement("close-login").click();
+    swal("Great!", res, "success");
+  })
+}
+
+function login() {
+  let submit = true;
+  const form = getElement("signin-form");
+  const userInfo = {
+    "username": form[0].value,
+    "password": form[1].value
+  }
+  if(!checkFill(userInfo.username)){
+    submit = false;
+    form[0].style.border = "1px solid #E34234";
+  }
+
+  if(!checkFill(userInfo.password)){
+    submit = false;
+    form[1].style.border = "1px solid #E34234";
+  }
+
+  if(!submit){
+    return false;
+  }
+
+  let httpRequest = new XMLHttpRequest();            
+  httpRequest.open('POST', '/api/login', false);
+  httpRequest.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      getElement("close-login").click();
+      getElement("account").click();
+    } else {
+      if (this.status == 402) {
+        swal({
+          title: "Almost there!",
+          text: JSON.parse(this.responseText).message, 
+          icon: "success",
+          buttons: {
+            resend: {
+              text: "Resend verification email",
+              value: "resend",
+            },
+            Continue: true,
+          }
+      }).then((value) => {
+          switch (value) {
+            case "resend":
+                resendVerificationEmail(form[0].value);
+              break;         
+            default:
+              swal.close();
+          }
+        });
+      } else{
+        swal("Sorry!", JSON.parse(this.responseText).message, "error");
+      }
+      
+    }
+  };
+  httpRequest.setRequestHeader("Content-type", "application/json");
+  httpRequest.send(JSON.stringify(userInfo));
+}
+
+function resendVerificationEmail(username) {
+  ajaxRequest('GET', '/api/resendVerificationEmail?username='+username, null, (res, err) => {
+    if(err){
+      swal("Sorry!", err, "error");
+    }
+    swal("Check your email", res, "success");
+  })
+}
+
+function isLogged() {
+  const session = checkSession();
+  if(session.logged){
+    if(window.location.pathname.slice(1)!='profile') {
+      const profileObj = {title: "Icowall-Profile", url: "profile"};
+      history.pushState(profileObj, profileObj.title, profileObj.url);
+      const path = window.location.pathname.slice(1);
+      
+    }
+    const blocks = getUserBlock();  
+    getElement("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
+                                                        <h3>"+session.user.email+"</h3>";
+    getElement("profile-table").innerHTML = "<tr>\
+                                                        <th></th>\
+                                                        <th>Name</th>\
+                                                        <th>Date</th>\
+                                                        <th>Blocks</th>\
+                                                        <th>Cost</th>\
+                                                        <th>Status</th>\
+                                                      </tr>";
+    populateTable(getElement("profile-table"), blocks, true);                                                   
+    showSection(getElement("profile-section"));
+    return;
+  } 
+  getElement("sign-modal").style.display="block";
+}
+
+function checkSession() {
+  let status = {"logged": false, "user": {}};
+  ajaxRequest('GET', '/api/logged', null, (res, err) => {
+    if(res){
+      status.logged = true;
+      status.user = res;
+    }
+  })
+
+  return status;
+}
+
+//get all block bought by user
+function getUserBlock() {
+  let blocks = {};
+  ajaxRequest('GET', '/api/userblocks', null, (res, err) => {
+    if(res){
+      blocks = res;
+    }
+  })
+  return blocks;
+}
+
+function signOut() {
+  ajaxRequest('GET', '/api/signout', null, ()=>{})
+  location.reload();  
+}
+
+function passwordReset() {
+  if(!checkPasswordConfirmationReset()){
+    return;
+  }
+  const resetInfo = {
+    "password": getElement("password-recovery-form")[0].value
+  }
+  const queue = window.location.href.split("?")[1];
+  ajaxRequest('POST', '/api/passwordreset?'+queue, resetInfo, (res, err) => {
+    if(err){
+      swal("Ooos!", err, "error");
+      return;
+    }
+    swal("Great!", res, "success");
+    getElement("close-password").click();
+  })
+}
+
+function passwordResetEmail() {
+  const email = {
+    "email": getElement("password-reset-email-form")[0].value
+  }
+  ajaxRequest('POST', '/api/forgotpassword', email, (res, err) => {
+    if(err){
+      swal("Ooos!", err, "error");
+      return;
+    }
+    swal("Good news!", res, "success");
+    getElement("close-password").click();
+  }) 
+}
+
+function blockCost() {
+  let cost = 0;
+  ajaxRequest('GET', '/api/blockcost', null, (res, err) => {
+    if(err){
+      swal("Sorry!", err, "error");
+      getElement("home").click();
+      return;
+    }
+    cost = res;
+  }) 
+  return cost;
+}
+
+
+
+// listeners (onclick, submit)
+getElement("register-link").onclick = function(event) {
+  getElement("login").style.display = "none";
+  getElement("restore-password-email").style.display = "none";
+  getElement("signup").style.display = "block";
+}
+
+getElement("logout").onclick = function(event) {
+  signOut();
+  getElement("home").click();
+}
+
+getElement("login-link").onclick = function(event) {
+  getElement("signup").style.display = "none";
+  getElement("restore-password-email").style.display = "none";
+  getElement("login").style.display = "block";
+}
+
+getElement("forgot-password").onclick = function(event) {
+  getElement("login").style.display = "none";
+  getElement("signup").style.display = "none";
+  getElement("restore-password-email").style.display = "block";
+}
+
+getElement("password-reset-email").onclick = function(event) {
+  passwordResetEmail();
+}
+
+getElement("contact-submit").onclick = function(event) {
+  submitContact();
+}
+
+getElement("contact").onclick = function(event) {
+  getElement("contact-modal").style.display = "block";
+}
+
+getElement("grid-container").onmouseover = function() {
+  getElement("hover-title").innerHTML = "";
+  getElement("hover-title").style.display = "none";
+}
+
+getElement("icons-container").onmouseover = function() {
+  getElement("hover-title").innerHTML = "<p>Rent block</p>";
+  getElement("hover-title").style.display = "block";
+}
+
+getElement("icons-container").onmousemove = function(event) {
+  getElement("hover-title").style.left = event.pageX + 5 + "px";
+  getElement("hover-title").style.top = event.pageY + 5 + "px";
+}
+
+getElement("icons-container").onclick = function(event) {
+  getElement("hover-title").style.display = "none";
+  getElement("buy").click();
+}
+
+getElement("ratio").onclick = function(event) {
+  getElement("ratio").className = "hide-scale-option";
+  getElement("no-ratio").className = "";
+}
+
+getElement("no-ratio").onclick = function(event) {
+  ratio = getElement("blocks-columns").value/getElement("blocks-rows").value;
+  getElement("no-ratio").className = "hide-scale-option";
+  getElement("ratio").className = "";
+}
+
+getElement("cancel-position").onclick = function(){
+  getElement("buy-modal").style.display = "none";
+}
+
+getElement("accept-position").onclick = function(){
+  getElement("position-confirmation").style.display = "none";
+  getElement("icon-registration").style.display = "block";
+}
+
+getElement("ico-registration-next").onclick = function(){
+  const formInfo = getElement("ico-registration-form");
   let error = [];
   let submit = true;
   
@@ -587,629 +1134,81 @@ document.getElementById("ico-registration-next").onclick = function(){
     swal("Watch out!", error.join(", "), "warning");
     return false;
   }
-  document.getElementById("icon-registration").style.display = "none";
-  document.getElementById("modal-content").className = "modal-content modal-accounts";
-  document.getElementById("icon-accounts").style.display = "block";
+  getElement("icon-registration").style.display = "none";
+  getElement("modal-content").className = "modal-content modal-accounts";
+  getElement("icon-accounts").style.display = "block";
 }
 
-function getImgPrevBlocks(imgGridBlocks) {
-  const firstXblock = imgGridBlocks.X.indexOf(parseInt(imgPreview.style.left.split("px")[0])),
-   lastXblock = firstXblock + Math.round(imgPreview.width/imgGridBlocks.size) - 1,
-   firstYblock = imgGridBlocks.Y.indexOf(parseInt(imgPreview.style.top.split("px")[0])),
-   lastYblock = firstYblock + Math.round(imgPreview.height/imgGridBlocks.size) - 1;
-
-   return [firstXblock, lastXblock, firstYblock, lastYblock];
+getElement("close-login").onclick = function(event) {
+  getElement("sign-modal").style.display = "none";
+  getElement("signup").style.display = "none";
+  getElement("restore-password-email").style.display = "none";
+  getElement("login").style.display = "block";
 }
 
-function blockCost() {
-  let cost = 0;
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/blockcost', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      cost = JSON.parse(this.responseText).message;
-    } else {
-      swal("Sorry!", JSON.parse(this.responseText).message, "error");
-      document.getElementById("home").click();
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send();
-  return cost;
+getElement("close-password").onclick = function(event) {
+  getElement("password-recovery-modal").style.display = "none";
 }
 
-function freezeImgPreview() {
-  imgPreview.setAttribute("class", "no-drag");
-  imgPreview.style.zIndex = 10;
+getElement("close-contact").onclick = function(event) {
+  getElement("contact-modal").style.display = "none";
 }
 
-function validPosition(firstXblock, lastXblock, firstYblock, lastYblock) {
-  return unavailableBlocks.every((unavailable) => validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, lastYblock));
-}
-
-function validBlockPosition(unavailable, firstXblock, lastXblock, firstYblock, lastYblock) {
-  if((firstXblock >= unavailable.columnBlocks[0] && firstXblock <= unavailable.columnBlocks[1]) || (lastXblock >= unavailable.columnBlocks[0] && lastXblock <= unavailable.columnBlocks[1]) || (firstXblock < unavailable.columnBlocks[0] && lastXblock > unavailable.columnBlocks[1])){
-    if((firstYblock >= unavailable.rowBlocks[0] && firstYblock <= unavailable.rowBlocks[1]) || (lastYblock >= unavailable.rowBlocks[0] && lastYblock <= unavailable.rowBlocks[1]) || (firstYblock < unavailable.rowBlocks[0] && lastYblock > unavailable.rowBlocks[1])){
-      return false;
-    }
-  }
-  return true;
-}
-
-function setImgPrevAttributes() {
-  const sizeProportion = getSizeProportion(),
-   colBlocks = Math.round(imgPreview.width/10)<=100?Math.round(imgPreview.width/10):100;
-   rowsBlocks = Math.round(imgPreview.height/10)<=100?Math.round(imgPreview.height/10):100;
-   setSizeToolsValues(colBlocks, rowsBlocks);
-   width = Math.round(colBlocks*10*sizeProportion),
-   height = Math.round(rowsBlocks*10*sizeProportion);
-  ratio = colBlocks/rowsBlocks;
-
-  imgPreview.width = width <= 1000*sizeProportion? width : Math.round(1000*sizeProportion);
-  imgPreview.height = height <= 1000*sizeProportion? height : Math.round(1000*sizeProportion);
-}
-
-function updateImgPrevAttributes(colBlocks, rowsBlocks) {
-  const sizeProportion = getSizeProportion();
-  if(colBlocks){
-    imgPreview.width = Math.round(colBlocks*10*sizeProportion);
-    if(document.getElementById("no-ratio").className){
-      imgPreview.height = Math.round(Math.round(colBlocks/ratio)*10*sizeProportion);
-      document.getElementById("blocks-rows").value = Math.round(colBlocks/ratio);
-    }
-  }
-
-  if(rowsBlocks){
-    imgPreview.height = Math.round(rowsBlocks*10*sizeProportion);
-    if(document.getElementById("no-ratio").className){
-      imgPreview.width = Math.round(Math.round(rowsBlocks*ratio)*10*sizeProportion);
-      document.getElementById("blocks-columns").value = Math.round(rowsBlocks*ratio);
-    }
-  }
-}
-
-function loadImage() {
-  const img = inputImg.files[0];
-  if(img) {
-    cleanElement(iconsContainer);
-    showSection(gridSection, uploadSection)
-    setIcons(iconsContainer, allIcons["icons"]); 
-    display.readAsDataURL(img);
-    document.getElementById("feed").style.display = "none";
-    document.getElementById("tools").style.display = "block";
-  }
-}
-
-function setSizeToolsValues(columns, rows){
-  document.getElementById("blocks-columns").value = columns;
-  document.getElementById("blocks-rows").value = rows;
-}
-
-
-document.getElementById("blocks-columns").onchange = function (event) {
-  // console.log("new width" + document.getElementById("blocks-columns").value);
-  updateImgPrevAttributes(document.getElementById("blocks-columns").value);
-}
-
-document.getElementById("blocks-rows").onchange = function (event) {
-  // console.log("new width" + document.getElementById("blocks-columns").value);
-  updateImgPrevAttributes(null, document.getElementById("blocks-rows").value);
-}
-
-function iconRegistration(imgGridBlocks) {
-  const formInfo = document.getElementById("ico-registration-form");
-  const formAccounts = document.getElementById("form-accounts");
-  console.log(formInfo[8].value, formInfo[6].value,formInfo[7].value)
-  const imgBlocks = getImgPrevBlocks(imgGridBlocks);  
-  const imgInfo = {
-    "name": formInfo[0].value,
-    "description": formInfo[1].value,
-    "web": formInfo[2].value,
-    "date": new Date(parseInt(formInfo[5].value),parseInt(formInfo[3].value)-1,parseInt(formInfo[4].value)),
-    "dateFinish": new Date(parseInt(formInfo[8].value),parseInt(formInfo[6].value)-1,parseInt(formInfo[7].value)),
-    "columnSize": document.getElementById("blocks-columns").value,
-    "rowSize": document.getElementById("blocks-rows").value,
-    "columns": [imgBlocks[0], imgBlocks[1]],
-    "rows": [imgBlocks[2], imgBlocks[3]],
-    "period": document.getElementById("rent-weeks").value,
-    "image": imgPreview.src,
-    "facebook": formAccounts[0].value,
-    "twitter": formAccounts[1].value,
-    "github": formAccounts[2].value,
-    "telegram": formAccounts[3].value,
-    "bitcoin": formAccounts[4].value,
-    "reddit": formAccounts[5].value,
-    "slack": formAccounts[6].value
-  }
-
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/upload', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("close-accounts").click();
-      swal("Well done!", JSON.parse(this.responseText).message, "success");
-    } else {
-      swal("Something went wrong!", JSON.parse(this.responseText).message, "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.withCredentials = true;
-  httpRequest.send(JSON.stringify(imgInfo));
-}
-
-
-
-
-
-function modalOpen(modal) {
-  modal.style.display = "block";
-}
-
-function modalClose(modal){
-   modal.style.display = "none";
-}
-
-document.getElementById("close-login").onclick = function(event) {
-  document.getElementById("sign-modal").style.display = "none";
-  document.getElementById("signup").style.display = "none";
-  document.getElementById("restore-password-email").style.display = "none";
-  document.getElementById("login").style.display = "block";
-}
-
-document.getElementById("close-password").onclick = function(event) {
-  document.getElementById("password-recovery-modal").style.display = "none";
-}
-
-document.getElementById("close-contact").onclick = function(event) {
-  document.getElementById("contact-modal").style.display = "none";
-}
-
-document.getElementById("contact-modal").onclick = function(event) {
-  document.getElementById("contact-modal").style.display = "none";
+getElement("contact-modal").onclick = function(event) {
+  getElement("contact-modal").style.display = "none";
 } 
 
-document.getElementById("sign-modal").onclick = function(event) {
-  document.getElementById("sign-modal").style.display = "none";
-  document.getElementById("signup").style.display = "none";
-  document.getElementById("login").style.display = "block";
+getElement("sign-modal").onclick = function(event) {
+  getElement("sign-modal").style.display = "none";
+  getElement("signup").style.display = "none";
+  getElement("login").style.display = "block";
 } 
 
-document.getElementById("close-buy").onclick = function(event) {
-  document.getElementById("buy-modal").style.display = "none";
+getElement("close-buy").onclick = function(event) {
+  getElement("buy-modal").style.display = "none";
   showSection(gridSection);
-  document.getElementById("icon-registration").style.display = "none";
-  document.getElementById("position-confirmation").style.display = "block";
-  document.getElementById("home").click();
+  getElement("icon-registration").style.display = "none";
+  getElement("position-confirmation").style.display = "block";
+  getElement("home").click();
 }
 
-document.getElementById("close-accounts").onclick = function(event) {
-  document.getElementById("buy-modal").style.display = "none";
+getElement("close-accounts").onclick = function(event) {
+  getElement("buy-modal").style.display = "none";
   showSection(gridSection);
-  document.getElementById("modal-content").className = "modal-content";
-  document.getElementById("icon-accounts").style.display = "none";
-  document.getElementById("position-confirmation").style.display = "block";
-  document.getElementById("home").click();
+  getElement("modal-content").className = "modal-content";
+  getElement("icon-accounts").style.display = "none";
+  getElement("position-confirmation").style.display = "block";
+  getElement("home").click();
 }
 
-document.getElementById("signup-submit").onclick = function(event) {
-  const validUsername = checkFields("username")
-  const validEmail = checkFields("email")
+getElement("signup-submit").onclick = function(event) {
+  const validUsername = checkUniqueFields("username")
+  const validEmail = checkUniqueFields("email")
   if (validUsername && validEmail) {
     registerAccount();
   }
 }
 
-document.getElementById("signin-submit").onclick = function(event) {
+getElement("signin-submit").onclick = function(event) {
     login();
 }
 
-document.getElementById("password-recovery-submit").onclick = function(event) {
+getElement("password-recovery-submit").onclick = function(event) {
     passwordReset();
 }
 
-function checkFields(parameter) {
-    const input = document.getElementById(parameter);
-    if (checkUniqueness(parameter, input)) {
-      return true;
-    }
-    return false;
+getElement("blocks-columns").onchange = function (event) {
+  updateImgPrevAttributes(getElement("blocks-columns").value);
+}
+
+getElement("blocks-rows").onchange = function (event) {
+  updateImgPrevAttributes(null, getElement("blocks-rows").value);
 }
 
 
-function checkUniqueness(parameter, input) {
-  let unique;
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/uniqueness', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      input.style.border = "none";
-      unique = true;
-    } else {
-      input.style.border = "1px solid #E34234";
-      swal("Ooops!", JSON.parse(this.responseText).message, "warning");
-      unique =  false;
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send(JSON.stringify({"parameter": parameter, "value": input.value}));
-  return unique;
-}
 
-function checkPasswordConfirmation() {
-  const password = document.getElementById("password"),
-    passwordConfirmation = document.getElementById("password-confirmation");
-    if(password.value != passwordConfirmation.value){
-      passwordNotEqual(password, passwordConfirmation);
-      return false;
-    }
-    return true;
-}
-
-function passwordNotEqual(field1, field2){
-  // swal("Watch out!", "The password didn't match", "warning");
-  field1.value = "";
-  field2.value = "";
-}
-
-function registerAccount() {
-  let submit = true;
-  let error = [];
-  const form = document.getElementById("signup-form");
-  const userInfo = {
-    "username": form[0].value,
-    "email": form[1].value,
-    "password": form[2].value
-  }
-
-  if(!checkFill(userInfo.username)){
-    submit = false;
-    error.push("Enter a username")
-    form[0].style.border = "1px solid #E34234";
-  }
-
-  if(checkSpace(userInfo.username)){
-    submit = false;
-    error.push("Don't use spaces on your username");
-    form[0].style.border = "1px solid #E34234";
-  }
-
-  if(!checkFill(userInfo.email)){
-    submit = false;
-    error.push("Enter a valid email");
-    form[1].style.border = "1px solid #E34234";
-  } else {
-    if(!checkEmail(userInfo.email)){
-      submit = false;
-      error.push("The email you provided is invalid");
-      form[1].style.border = "1px solid #E34234";
-    }
-  }
-
-  if(!checkFill(userInfo.password)){
-    submit = false;
-    error.push("Enter a password")
-    form[2].style.border = "1px solid #E34234";
-  }
-
-  if(!checkFill(form[3].value)){
-    submit = false;
-    error.push("Confirm your password")
-    form[3].style.border = "1px solid #E34234";
-  }
-
-  if(!checkPasswordConfirmation()){
-    submit = false;
-    error.push("The passwords didn't match"); 
-  }
-  
-
-  if(!submit){
-    swal("Watch out!", error.join(", "), "warning");
-    return false;
-  }
-
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/register', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("close-login").click();
-      swal("Great!", JSON.parse(this.responseText).message, "success");
-    } else {
-      swal("Sorry!", JSON.parse(this.responseText).message, "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send(JSON.stringify(userInfo));
-}
-
-function login() {
-  let submit = true;
-  const form = document.getElementById("signin-form");
-  const userInfo = {
-    "username": form[0].value,
-    "password": form[1].value
-  }
-  if(!checkFill(userInfo.username)){
-    submit = false;
-    form[0].style.border = "1px solid #E34234";
-  }
-
-  if(!checkFill(userInfo.password)){
-    submit = false;
-    form[1].style.border = "1px solid #E34234";
-  }
-
-  if(!submit){
-    return false;
-  }
-
-
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/login', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("close-login").click();
-      document.getElementById("account").click();
-    } else {
-      if (this.status == 402) {
-        swal({
-          title: "Almost there!",
-          text: JSON.parse(this.responseText).message, 
-          icon: "success",
-          buttons: {
-            resend: {
-              text: "Resend verification email",
-              value: "resend",
-            },
-            Continue: true,
-          }
-      }).then((value) => {
-          switch (value) {
-            case "resend":
-                resendVerificationEmail(form[0].value);
-              break;         
-            default:
-              swal.close();
-          }
-        });
-      } else{
-        swal("Sorry!", JSON.parse(this.responseText).message, "error");
-      }
-      
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send(JSON.stringify(userInfo));
-}
-
-function resendVerificationEmail(username) {
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/resendVerificationEmail?username='+username, false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      swal("Check your email", "Your verification email was sent", "success");
-    } else {
-      swal("Sorry!", JSON.parse(this.responseText).message, "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send();
-}
-
-function isLogged() {
-  const session = checkSession();
-  if(session.logged){
-    if(window.location.pathname.slice(1)!='profile') {
-      const profileObj = {title: "Icowall-Profile", url: "profile"};
-      history.pushState(profileObj, profileObj.title, profileObj.url);
-      const path = window.location.pathname.slice(1);
-      gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
-    }
-    const blocks = getUserBlock();  
-    document.getElementById("profile-container").innerHTML = "<h1>"+session.user.username+"</h1>\
-                                                        <h3>"+session.user.email+"</h3>";
-    document.getElementById("profile-table").innerHTML = "<tr>\
-                                                        <th></th>\
-                                                        <th>Name</th>\
-                                                        <th>Date</th>\
-                                                        <th>Blocks</th>\
-                                                        <th>Cost</th>\
-                                                        <th>Status</th>\
-                                                      </tr>";
-    populateTable(document.getElementById("profile-table"), blocks, true);                                                   
-    showSection(document.getElementById("profile-section"));
-    return;
-  } 
-  document.getElementById("sign-modal").style.display="block";
-}
-
-function checkSession() {
-  let status = {"logged": false, "user": {}};
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/logged', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      status.logged = true;
-      status.user = JSON.parse(this.responseText).user;
-    } 
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send();
-  return status;
-}
-
-function getUserBlock() {
-  let blocks = {};
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/userblocks', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      blocks = JSON.parse(this.responseText).blocks;
-    } 
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send();
-  return blocks;
-}
-
-function signOut() {
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('GET', '/api/signout', false);
-  httpRequest.send();
-  return status;
-}
-
-function passwordReset() {
-  if(!checkPasswordConfirmationReset()){
-    return;
-  }
-  const resetInfo = {
-    "password": document.getElementById("password-recovery-form")[0].value
-  }
-  const queue = window.location.href.split("?")[1];
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/passwordreset?'+queue, false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      swal("Great!", "Your password was changed successfully", "success");
-      document.getElementById("close-password").click();
-    } else {
-      swal("Ooos!", "Something went wrong", "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send(JSON.stringify(resetInfo)); 
-}
-
-//check this one DRY
-function checkPasswordConfirmationReset() {
-  const password = document.getElementById("new-password-reset"),
-    passwordConfirmation = document.getElementById("confirm-password-reset");
-    if(password.value != passwordConfirmation.value){
-      passwordNotEqual(password, passwordConfirmation);
-      return false;
-    }
-    return true;
-}
-
-function populateHome(obj) {
-  if(obj && window.location.pathname.slice(1)!=obj.url) {
-    history.pushState(obj, obj.title, obj.url);
-    const path = window.location.pathname.slice(1);
-    gtag('config', 'UA-109487361-1', {'page_path': '/'+path});
-  }
-  cleanElement(iconsContainer);
-  setIcons(iconsContainer, approvedIcons["icons"]);
-}
-
-document.getElementById("register-link").onclick = function(event) {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("restore-password-email").style.display = "none";
-  document.getElementById("signup").style.display = "block";
-}
-
-document.getElementById("logout").onclick = function(event) {
-  signOut();
-  document.getElementById("home").click();
-}
-
-document.getElementById("login-link").onclick = function(event) {
-  document.getElementById("signup").style.display = "none";
-  document.getElementById("restore-password-email").style.display = "none";
-  document.getElementById("login").style.display = "block";
-}
-
-document.getElementById("forgot-password").onclick = function(event) {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("signup").style.display = "none";
-  document.getElementById("restore-password-email").style.display = "block";
-}
-
-document.getElementById("password-reset-email").onclick = function(event) {
-  passwordResetEmail();
-}
-
-document.getElementById("contact-submit").onclick = function(event) {
-  submitContact();
-}
-
-function passwordResetEmail() {
-  const email = {
-    "email": document.getElementById("password-reset-email-form")[0].value
-  }
-  let httpRequest = new XMLHttpRequest();            
-  httpRequest.open('POST', '/api/forgotpassword', false);
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      swal("Good news!", "Password reset link have been mailed", "success");
-      document.getElementById("close-password").click();
-    } else {
-      swal("Ooos!", JSON.parse(this.responseText).message, "error");
-    }
-  };
-  httpRequest.setRequestHeader("Content-type", "application/json");
-  httpRequest.send(JSON.stringify(email)); 
-}
-
-function checkEmail(email) {
-  const validEmail = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$/.test(email.toLowerCase());
-  return validEmail;
-}
-
-function checkFill(value) {
-  if(value.length < 1) {
-    return false;
-  }
-  return true;
-}
-
-function checkSpace(value) {
-  const validEmail = /\s/.test(value);
-  return validEmail;
-}
-
-function contactUs() {
-  document.getElementById("contact-modal").style.display = "block";
-}
-
-function setTitlePosition(event) {
-  document.getElementById("hover-title").style.left = event.pageX + 5 + "px";
-  document.getElementById("hover-title").style.top = event.pageY + 5 + "px";
-}
-
-function showTitle(element, event) {
-  event.stopPropagation();
-  document.getElementById("hover-title").innerHTML = "<p>" + element.name + "</p>";
-  document.getElementById("hover-title").style.display = "block";
-}
-
-document.getElementById("grid-container").onmouseover = function() {
-  document.getElementById("hover-title").innerHTML = "";
-  document.getElementById("hover-title").style.display = "none";
-}
-
-document.getElementById("icons-container").onmouseover = function() {
-  document.getElementById("hover-title").innerHTML = "<p>Rent block</p>";
-  document.getElementById("hover-title").style.display = "block";
-}
-
-document.getElementById("icons-container").onmousemove = function(event) {
-  document.getElementById("hover-title").style.left = event.pageX + 5 + "px";
-  document.getElementById("hover-title").style.top = event.pageY + 5 + "px";
-}
-
-document.getElementById("icons-container").onclick = function(event) {
-  document.getElementById("hover-title").style.display = "none";
-  document.getElementById("buy").click();
-}
-
-document.getElementById("ratio").onclick = function(event) {
-  document.getElementById("ratio").className = "hide-scale-option";
-  document.getElementById("no-ratio").className = "";
-}
-
-document.getElementById("no-ratio").onclick = function(event) {
-  ratio = document.getElementById("blocks-columns").value/document.getElementById("blocks-rows").value;
-  document.getElementById("no-ratio").className = "hide-scale-option";
-  document.getElementById("ratio").className = "";
-}
+//Initiate the application
+window.onload = (function () {
+  init();
+  router(path);
+})();

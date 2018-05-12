@@ -70,7 +70,7 @@ module.exports = function(app) {
               "track_clicks": true
           };
           var async = false;
-          mandrill_client.messages.send({"message": mailInfo, "async": async}, function(result) {
+          mandrill_client.messages.send({message: mailInfo, "async": async}, function(result) {
               console.log(result);
           }, function(e) {
               // Mandrill returns the error as an object with name and message keys
@@ -87,9 +87,9 @@ module.exports = function(app) {
     db.collection("icons").find({approved: true}).sort({totalBlocks: -1}).toArray(function (err, result) {
       if (err) throw err
       if (result.length > 0){
-        res.status(200).json({"icons": result});
+        res.status(200).json({message: result});
       } else{
-        res.status(400).json({"message": "Unable to get Icons"});
+        res.status(400).json({message: "Unable to get Icons"});
       }  
     })  
   });
@@ -97,7 +97,7 @@ module.exports = function(app) {
   apiRoutes.get('/getUniqueUsers', (req, res) => {
     jwtClient.authorize(function (err, tokens) {
       if (err) {
-        console.log(err);
+        res.status(400).json({message: "Error accesing Google Analitics"});
         return;
       }
       let analytics = google.analytics('v3');
@@ -112,7 +112,7 @@ module.exports = function(app) {
           console.log(err);
           return;
         }
-        res.status(200).json({"users": response.rows[0][0]});
+        res.status(200).json({message: response.rows[0][0]});
       }); 
     });
   });
@@ -135,9 +135,9 @@ module.exports = function(app) {
     db.collection("icons").find().toArray(function (err, result) {
       if (err) throw err
       if (result.length > 0){
-        res.status(200).json({"icons": result});
+        res.status(200).json({message: result});
       } else{
-        res.status(400).json({"message": "Unable to get Icons"});
+        res.status(400).json({message: "Unable to get Icons"});
       }  
     })  
   });
@@ -147,9 +147,9 @@ module.exports = function(app) {
     db.collection("icons").find({"userId": id}).toArray(function (err, result) {
       if (err) throw err
       if (result.length > 0){
-        res.status(200).json({"blocks": result});
+        res.status(200).json({message: result});
       } else{
-        res.status(400).json({"message": id});
+        res.status(400).json({message: id});
       }  
     })  
   });
@@ -197,7 +197,7 @@ module.exports = function(app) {
   apiRoutes.get("/blockcost", passport.authenticate('jwt', { session: false }), function (req, res) {
     getCost().then((cost) => {
       if(!cost.btc || !cost.eth){
-          res.status(404).json({message: "Price unavailable"});
+          res.status(404).json({message: "Block price unavailable, try in a moment"});
       }else{
         res.status(200).json({message: cost});
       } 
@@ -494,7 +494,7 @@ module.exports = function(app) {
        function(err, user){
         console.log(user)
         if(user.value){
-          res.status(200).json({message:"Email confirmed"});
+          res.status(200).json({message:"Password changed successfully"});
         }else{
           res.status(401).json({message:"Invalid link"});
         }
@@ -547,7 +547,7 @@ module.exports = function(app) {
   }); 
 
   apiRoutes.get('/logged', passport.authenticate('jwt', { session: false }), function(req, res) {
-    res.status(200).json({"message": 'logged'+Date(), "user": req.user});
+    res.status(200).json({"message": req.user});
   });
 
   apiRoutes.get('/signout', passport.authenticate('jwt', { session: false }), function(req, res) {
