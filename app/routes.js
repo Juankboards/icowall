@@ -41,6 +41,7 @@ module.exports = function(app) {
 
   apiRoutes.post('/register', (req, res) => {
     const userInfo = req.body;
+    userInfo.email = userInfo.email.toLowerCase();
     userInfo.unconfirmed = crypto.randomBytes(20).toString('hex');
     userInfo.recover = "";
     userInfo.created = Date.now()
